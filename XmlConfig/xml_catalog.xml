@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <public publicId="-//Hibernate/Hibernate Configuration DTD 3.0//EN" uri="platform:/resource/XmlConfig/hibernate/hibernate-configuration-3.0.dtd" webURL="http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"/>
+  <public publicId="-//Hibernate/Hibernate Mapping DTD 3.0//EN" uri="platform:/resource/XmlConfig/hibernate/hibernate-mapping-3.0.dtd" webURL="http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"/>
+  <uri name="http://www.springframework.org/schema/beans/spring-beans.xsd" uri="platform:/resource/XmlConfig/spring/spring-beans.xsd"/>
+  <uri name="http://ehcache.org/ehcache.xsd" uri="platform:/resource/XmlConfig/ehcache/ehcache.xsd"/>
+  <uri name="http://www.springframework.org/schema/context/spring-context.xsd" uri="platform:/resource/XmlConfig/spring/spring-context.xsd"/>
+  <uri name="http://www.springframework.org/schema/aop/spring-aop.xsd" uri="platform:/resource/XmlConfig/spring/spring-aop.xsd"/>
+  <uri name="http://www.springframework.org/schema/cache/spring-cache.xsd" uri="platform:/resource/XmlConfig/spring/spring-cache.xsd"/>
+  <uri name="http://www.springframework.org/schema/jee/spring-jee.xsd" uri="platform:/resource/XmlConfig/spring/spring-jee.xsd"/>
+  <uri name="http://www.springframework.org/schema/lang/spring-lang.xsd" uri="platform:/resource/XmlConfig/spring/spring-lang.xsd"/>
+  <uri name="http://www.springframework.org/schema/mvc/spring-mvc.xsd" uri="platform:/resource/XmlConfig/spring/spring-mvc.xsd"/>
+  <uri name="http://www.springframework.org/schema/task/spring-task.xsd" uri="platform:/resource/XmlConfig/spring/spring-task.xsd"/>
+  <uri name="http://www.springframework.org/schema/tool/spring-tool.xsd" uri="platform:/resource/XmlConfig/spring/spring-tool.xsd"/>
+  <uri name="http://www.springframework.org/schema/tx/spring-tx.xsd" uri="platform:/resource/XmlConfig/spring/spring-tx.xsd"/>
+  <uri name="http://www.springframework.org/schema/util/spring-util.xsd" uri="platform:/resource/XmlConfig/spring/spring-util.xsd"/>
+  <public publicId="-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" uri="platform:/resource/XmlConfig/struts/struts-2.3.dtd" webURL="http://struts.apache.org/dtds/struts-2.3.dtd"/>
+  <uri name="http://cxf.apache.org/schemas/jaxws.xsd" uri="platform:/resource/XmlConfig/cxf/jaxws.xsd"/>
+  <uri name="http://cxf.apache.org/schemas/jaxrs.xsd" uri="platform:/resource/XmlConfig/cxf/jaxrs.xsd"/>
+  <public publicId="-//APACHE//DTD LOG4J 1.2//EN" uri="platform:/resource/XmlConfig/log4j/log4j.dtd" webURL="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd"/>
+</catalog>
