@@ -20,9 +20,8 @@ public class SelectSort implements Sort {
 	@Override
 	public <T> void sort(T[] a, Comparator<? super T> comparator) {
 		for (int i = 0; i < a.length - 1; i++) {
-			T first = a[i];
 			for (int j = i + 1; j < a.length; j++) {
-				if (comparator.compare(first, a[j]) > 0) {
+				if (comparator.compare(a[i], a[j]) > 0) {
 					T t = a[i];
 					a[i] = a[j];
 					a[j] = t;
