@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>zpark</groupId>
 	<artifactId>ssh-simple</artifactId>
-	<version>1.0.1.RELEASE</version>
+	<version>1.0.2.RELEASE</version>
 	<packaging>war</packaging>
 
 	<properties>
