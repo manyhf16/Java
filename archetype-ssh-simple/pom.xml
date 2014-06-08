@@ -41,7 +41,7 @@
 
 		<!-- DB Driver -->
 		<oracle.version>5.0</oracle.version>
-
+		<mysql.version>5.1.30</mysql.version>
 	</properties>
 
 	<dependencies>
@@ -50,6 +50,11 @@
 			<groupId>oracle.jdbc</groupId>
 			<artifactId>ojdbc</artifactId>
 			<version>${oracle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
 		</dependency>
 		<!-- Struts -->
 		<dependency>
