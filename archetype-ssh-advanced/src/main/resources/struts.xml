@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd" >
+<struts>
+	<!-- ===================================================================== -->
+	<!-- action扩展名，限定为.action -->
+	<!-- ===================================================================== -->
+	<constant name="struts.action.extension" value="action" />
+
+	<!-- ===================================================================== -->
+	<!-- 默认package -->
+	<!-- ===================================================================== -->
+	<package name="default" extends="struts-default" namespace="/">
+		<action name="sample" class="sampleAction" method="execute">
+			<result name="success">/WEB-INF/view/sampleView.jsp</result>
+			<result name="input">/index.jsp</result>
+		</action>
+	</package>
+
+</struts>
