@@ -20,13 +20,13 @@
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<!-- Beware ! "create" for test purpose only, make sure change to "update" while deploy -->
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
 			</props>
 		</property>
 		<property name="packagesToScan" value="zpark.entity" />
 	</bean>
 
-	<bean class="zpark.common.dao.GenericDaoRegistryPostProcessor">
+	<bean class="zpark.ext.hibernate.dao.GenericDaoRegistryPostProcessor">
 		<property name="daoPackageToScan" value="zpark.dao" />
 	</bean>
 

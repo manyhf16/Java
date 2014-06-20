@@ -1,4 +1,4 @@
-package zpark.common.dao;
+package zpark.ext.hibernate.dao;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -10,12 +10,13 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 
-import zpark.common.dao.annotations.OrderProperty;
-import zpark.common.dao.annotations.OrderDirection;
-import zpark.common.dao.annotations.PageNo;
-import zpark.common.dao.annotations.PageSize;
-import zpark.common.dao.annotations.Query;
-import zpark.common.ext.HibernateTemplateExt;
+import zpark.ext.annotations.OrderDirection;
+import zpark.ext.annotations.OrderProperty;
+import zpark.ext.annotations.PageNo;
+import zpark.ext.annotations.PageSize;
+import zpark.ext.annotations.Query;
+import zpark.ext.hibernate.HibernateTemplateExt;
+import zpark.ext.hibernate.QueryBuilder;
 
 /**
  * 泛型dao代理类工厂

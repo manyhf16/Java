@@ -1,4 +1,4 @@
-package zpark.common.dao;
+package zpark.ext.hibernate;
 
 import java.util.List;
 

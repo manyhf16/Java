@@ -1,7 +1,9 @@
-package zpark.common.dao;
+package zpark.ext.hibernate.dao;
 
 import java.io.Serializable;
 import java.util.List;
+
+import zpark.ext.hibernate.Page;
 
 /**
  * 泛型dao接口

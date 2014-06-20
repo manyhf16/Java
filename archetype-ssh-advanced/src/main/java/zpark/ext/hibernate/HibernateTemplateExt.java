@@ -1,4 +1,4 @@
-package zpark.common.ext;
+package zpark.ext.hibernate;
 
 import java.sql.SQLException;
 import java.util.List;

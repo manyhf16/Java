@@ -1,14 +1,14 @@
 package zpark.dao;
 
-import zpark.common.dao.GenericDao;
-import zpark.common.dao.Page;
-import zpark.common.dao.QueryBuilder;
-import zpark.common.dao.annotations.OrderDirection;
-import zpark.common.dao.annotations.OrderProperty;
-import zpark.common.dao.annotations.PageNo;
-import zpark.common.dao.annotations.PageSize;
-import zpark.common.dao.annotations.Query;
 import zpark.entity.SampleEntity;
+import zpark.ext.annotations.OrderDirection;
+import zpark.ext.annotations.OrderProperty;
+import zpark.ext.annotations.PageNo;
+import zpark.ext.annotations.PageSize;
+import zpark.ext.annotations.Query;
+import zpark.ext.hibernate.Page;
+import zpark.ext.hibernate.QueryBuilder;
+import zpark.ext.hibernate.dao.GenericDao;
 
 public interface SampleDao extends GenericDao<SampleEntity, Integer> {
 

@@ -1,11 +1,12 @@
-package zpark.common.dao;
+package zpark.ext.hibernate.dao;
 
 import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 
-import zpark.common.ext.HibernateTemplateExt;
+import zpark.ext.hibernate.HibernateTemplateExt;
+import zpark.ext.hibernate.Page;
 
 /**
  * 泛型dao 实现
