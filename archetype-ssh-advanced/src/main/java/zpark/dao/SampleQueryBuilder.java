@@ -2,7 +2,7 @@ package zpark.dao;
 
 import java.util.List;
 
-import zpark.ext.hibernate.QueryBuilder;
+import zpark.ext.query.QueryBuilder;
 
 public final class SampleQueryBuilder implements QueryBuilder {
 	private final Integer id;

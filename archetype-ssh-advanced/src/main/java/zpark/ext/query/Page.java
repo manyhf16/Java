@@ -1,4 +1,4 @@
-package zpark.ext.hibernate;
+package zpark.ext.query;
 
 import java.util.List;
 

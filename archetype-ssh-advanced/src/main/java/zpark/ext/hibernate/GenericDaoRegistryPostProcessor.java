@@ -1,4 +1,4 @@
-package zpark.ext.hibernate.dao;
+package zpark.ext.hibernate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class GenericDaoRegistryPostProcessor implements BeanDefinitionRegistryPo
 
 	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(this.resourcePatternResolver);
 	
-	private String genericDaoInterface = "zpark.ext.hibernate.dao.GenericDao";
+	private String genericDaoInterface = "zpark.ext.hibernate.GenericDao";
 	
 	public void setGenericDaoInterface(String genericDaoInterface) {
 		this.genericDaoInterface = genericDaoInterface;

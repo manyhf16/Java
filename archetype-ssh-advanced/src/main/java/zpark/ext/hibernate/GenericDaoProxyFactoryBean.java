@@ -1,4 +1,4 @@
-package zpark.ext.hibernate.dao;
+package zpark.ext.hibernate;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,8 +15,7 @@ import zpark.ext.annotations.OrderProperty;
 import zpark.ext.annotations.PageNo;
 import zpark.ext.annotations.PageSize;
 import zpark.ext.annotations.Query;
-import zpark.ext.hibernate.HibernateTemplateExt;
-import zpark.ext.hibernate.QueryBuilder;
+import zpark.ext.query.QueryBuilder;
 
 /**
  * 泛型dao代理类工厂

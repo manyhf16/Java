@@ -6,9 +6,9 @@ import zpark.ext.annotations.OrderProperty;
 import zpark.ext.annotations.PageNo;
 import zpark.ext.annotations.PageSize;
 import zpark.ext.annotations.Query;
-import zpark.ext.hibernate.Page;
-import zpark.ext.hibernate.QueryBuilder;
-import zpark.ext.hibernate.dao.GenericDao;
+import zpark.ext.hibernate.GenericDao;
+import zpark.ext.query.Page;
+import zpark.ext.query.QueryBuilder;
 
 public interface SampleDao extends GenericDao<SampleEntity, Integer> {
 

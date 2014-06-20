@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import zpark.dao.SampleDao;
 import zpark.dao.SampleQueryBuilder;
 import zpark.entity.SampleEntity;
-import zpark.ext.hibernate.Page;
+import zpark.ext.query.Page;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/application-config.xml")
