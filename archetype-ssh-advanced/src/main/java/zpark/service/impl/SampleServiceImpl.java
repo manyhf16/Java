@@ -20,7 +20,7 @@ public class SampleServiceImpl implements SampleService {
 
 	public String sample() {
 		logger.info("sample service method...");
-		sampleDao.sample();
+		sampleDao.findAll();
 		return "Service OK";
 	}
 

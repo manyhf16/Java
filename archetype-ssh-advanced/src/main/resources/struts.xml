@@ -5,12 +5,18 @@
 	<!-- action扩展名，限定为.action -->
 	<!-- ===================================================================== -->
 	<constant name="struts.action.extension" value="action" />
+	<constant name="struts.devMode" value="true" />
 
 	<!-- ===================================================================== -->
 	<!-- 默认package -->
 	<!-- ===================================================================== -->
 	<package name="default" extends="struts-default" namespace="/">
+		<interceptors>
+			<interceptor name="jsonResult" class="zpark.ext.struts.JsonResultInterceptor"/>
+		</interceptors>
 		<action name="sample" class="sampleAction" method="execute">
+			<interceptor-ref name="defaultStack"/>
+			<interceptor-ref name="jsonResult"/>
 			<result name="success">/WEB-INF/view/sampleView.jsp</result>
 			<result name="input">/index.jsp</result>
 		</action>

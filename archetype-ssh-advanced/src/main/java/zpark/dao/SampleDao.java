@@ -12,6 +12,7 @@ import zpark.ext.query.QueryBuilder;
 
 public interface SampleDao extends GenericDao<SampleEntity, Integer> {
 
+	@Query(hql = "from SampleEntity")
 	public String sample();
 
 	@Query(hql = "from SampleEntity where id > ? and name like ?")

@@ -1,0 +1,56 @@
+package zpark.entity;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.TableGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@SuppressWarnings("serial")
+@Entity
+@TableGenerator(name = "category_tg", table = "pk_table", pkColumnName = "table_name", pkColumnValue = "category", valueColumnName = "next_value", initialValue = 0, allocationSize = 1)
+public class Category implements Serializable {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "category_tg")
+	private int id;
+
+	private String name;
+
+	@OneToMany(mappedBy = "category", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@JsonIgnore
+	private Set<Product> products = new HashSet<Product>();
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
+}
