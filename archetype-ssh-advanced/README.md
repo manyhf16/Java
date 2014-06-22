@@ -107,7 +107,7 @@ I provide an interceptor to render json view, auto result type detected, add fol
 		<interceptor-ref name="defaultStack"/>
 		<interceptor-ref name="jsonResult"/>
 		<result name="success">/WEB-INF/view/sampleView.jsp</result>
-		<result name="input">/index.jsp</result> 
+		<result name="input">/index.jsp</result>
 	</action>
 </package>
 ```
