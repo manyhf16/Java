@@ -2,53 +2,56 @@
 
 Archetype-SSH-Advanced 是为了方便快速搭建SSH框架 (`struts2 spring3 hibernate3`)的脚手架项目，为了方便整合，还提供了一些常用扩展如：hibernate泛型DAO，struts的JSON转换拦截器等
 
-## Status
+## Table of contents
 
-Module is fully usable, as it is based on earlier "jackson-xc" jar that was part of Jackson distribution in 1.x versions.
+ - [Quick start](#quick-start)
+ - [Features](#features)
+ 	- [Generic DAO Support](#generic-dao-support)
 
-For Jackson 2.0 functionality will be only offered through this module.
+### Quick start
 
-## Maven dependency
+- [download and install git](http://git-scm.com/download/).
+- [download and install maven](http://maven.apache.org/download.cgi).
+- `$ git clone https://github.com/manyhf16/Java.git`.
+- `$ cd /your git home/Java/archetype-ssh-advanced`.
+- `$ mvn archetype:create-from-project`.
+- `$ cd /your git home/Java/archetype-ssh-advanced/target/generated-sources/archetype`.
+- `$ mvn install`.
 
-To use this extension on Maven-based projects, use following dependency:
+Now you can find this Archetype in Maven's default local catelog.
 
-```xml
-<dependency>
-  <groupId>com.fasterxml.jackson.module</groupId>
-  <artifactId>jackson-module-jaxb-annotations</artifactId>
-  <version>2.4.0</version>
-</dependency>
-```
+### Features
 
-(or whatever version is most up-to-date at the moment)
-
-## Usage
-
-To enable use of JAXB annotations, one must add `JaxbAnnotationIntrospector` provided by this module. There are two ways to do this:
-
-* Register `JaxbAnnotationModule`, or
-* Directly add `JaxbAnnotationIntrospector`
-
-Module registration works in standard way:
-
+#### Generic DAO Support
+You can build your DAO interface like this:
 ```java
-JaxbAnnotationModule module = new JaxbAnnotationModule();
-// configure as necessary
-objectMapper.registerModule(module);
+public interface ProductDao extends GenericDao<Product, Integer> {
+
+}
 ```
-
-and the alternative -- explicit configuration is done as:
-
+No more concrete class implements is needed! Cause all necessary method is define in its super interface:
 ```java
-AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-// if ONLY using JAXB annotations:
-mapper.setAnnotationIntrospector(introspector);
-// if using BOTH JAXB annotations AND Jackson annotations:
-AnnotationIntrospector secondary = new JacksonAnnotationIntrospector();
-mapper.setAnnotationIntrospector(new AnnotationIntrospector.Pair(introspector, secondary);
+public interface GenericDao<T, ID extends Serializable> {
+	public ID save(T entity);
+	public void update(T entity);
+	public void delete(ID id);
+	public T findOne(ID id);
+	public List<T> findAll();
+	public Page<T> findPage(final int pageNo, final int pageSize, 
+		final String hql, final String counthql, Object... objects);
+	public Page<T> findPage(final int pageNo, final int pageSize, 
+		final String hql, final String counthql, List<Object> objects);
+	public T findOne(final String hql, final Object... objects);	
+	public <W> W findOne(Class<W> c, final String hql, final Object... objects) ;
+}
 ```
-
-Note that by default Module version will use JAXB annotations as the primary, and Jackson annotations as secondary source; but you can change this behavior
-
-(need to add example here!)
-mvn archetype:create-from-project
+Aslo, Use Dependency Inject to your Service bean:
+```java
+@Service @Transactional
+public class ProductServiceImpl implements ProductService {
+	private static Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+	@Autowired
+	private ProductDao productDao;
+	...
+}
+```
