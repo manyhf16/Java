@@ -24,19 +24,19 @@
 	<!-- 日志写出器：每一个logger可以有多个输出目的地和输出方式 -->
 	<!-- ===================================================================== -->
 	<logger name="zpark" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
 	<logger name="org.hibernate.SQL" additivity="false">
-		<level value="DEBUG" />
+		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
 	<logger name="org.springframework" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
 	<logger name="org.springframework.beans.factory.annotation.InjectionMetadata" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
 

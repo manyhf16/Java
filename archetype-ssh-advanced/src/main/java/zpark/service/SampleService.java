@@ -1,7 +1,11 @@
 package zpark.service;
 
+import java.util.List;
+
+import zpark.entity.SampleEntity;
+
 public interface SampleService {
-	
-	public String sample();
+
+	public List<SampleEntity> findAll();
 
 }

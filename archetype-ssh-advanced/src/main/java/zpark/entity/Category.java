@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,7 +25,7 @@ public class Category implements Serializable {
 
 	private String name;
 
-	@OneToMany(mappedBy = "category", fetch=FetchType.LAZY, cascade={CascadeType.PERSIST})
+	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Set<Product> products = new HashSet<Product>();
 

@@ -26,11 +26,13 @@ public interface GenericDao<T, ID extends Serializable> {
 	public T findOne(ID id);
 
 	public List<T> findAll();
-	
-	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, Object... objects) ;
-	
+
+	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, Object... objects);
+
 	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, List<Object> objects);
+
+	public T findOne(final String hql, final Object... objects);
 	
-	public T findOne(final String hql, final Object... objects) ;
+	public <W> W findOne(Class<W> c, final String hql, final Object... objects) ;
 
 }

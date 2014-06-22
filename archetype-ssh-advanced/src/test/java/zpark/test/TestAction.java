@@ -2,6 +2,8 @@ package zpark.test;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,9 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import zpark.action.SampleAction;
-import zpark.dao.CategoryDao;
 import zpark.dao.ProductDao;
 import zpark.entity.Product;
+import zpark.entity.SampleEntity;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,10 +33,7 @@ public class TestAction {
 	private SampleAction action;
 	
 	@Autowired
-	private ProductDao productDao;
-	
-	@Autowired
-	private CategoryDao categoryDao;
+	private ProductDao dao;
 	
 	@Test
 	public void test1() {
@@ -51,38 +50,33 @@ public class TestAction {
 	
 	@Test
 	public void test3() throws JsonGenerationException, JsonMappingException, IOException {
-//		SampleAction action = new SampleAction();
-		action.setResult("aaa");
+		List<SampleEntity> result = new ArrayList<SampleEntity>();
+		SampleEntity s1 = new SampleEntity();
+		s1.setId(1);
+		s1.setName("张三");
+		SampleEntity s2 = new SampleEntity();
+		s2.setId(2);
+		s2.setName("李四");
+		result.add(s1);
+		result.add(s2);
+		action.setResult(result);
 		action.setName("ok");
 		ObjectMapper om = new ObjectMapper();
 		StringWriter sw = new StringWriter();
 		om.writeValue(sw, action);
-		System.out.println(sw.toString());
+		Assert.assertEquals("{\"name\":\"ok\",\"result\":{\"value\":[{\"id\":1,\"name\":\"张三\"},{\"id\":2,\"name\":\"李四\"}]}}", sw.toString());
 	}
-	
-//	@Before
-//	@Rollback(false)
-//	public void before() {
-//		Product p = new Product();
-//		p.setName("iPad");
-//		
-//		Category c = new Category();
-//		c.setName("电子产品");
-//		p.setCategory(c);
-//		categoryDao.save(c);
-//		productDao.save(p);		
-//	}
 	
 	@Test
 	public void test4 () throws JsonGenerationException, JsonMappingException, IOException {
-		Product e = productDao.findOne(1);
+		Product e = dao.findOne(1);
 		ObjectMapper om = new ObjectMapper();
 		Hibernate3Module hibernate3Module = new Hibernate3Module();
 		hibernate3Module.enable(Feature.FORCE_LAZY_LOADING);
 		om.registerModule(hibernate3Module);		
 		StringWriter sw = new StringWriter();
 		om.writeValue(sw, e);
-		System.out.println(sw.toString());
+		Assert.assertEquals("{\"id\":1,\"name\":\"iPad\",\"category\":{\"id\":1,\"name\":\"电子产品\"}}", sw.toString());
 	}
 	
 }

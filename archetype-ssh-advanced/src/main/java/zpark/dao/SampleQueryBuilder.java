@@ -15,11 +15,11 @@ public final class SampleQueryBuilder implements QueryBuilder {
 
 	@Override
 	public void build(StringBuilder sb, List<Object> params) {
-		if(id != null) {
+		if (id != null) {
 			sb.append(" and id > ?");
 			params.add(id);
 		}
-		if(name != null) {
+		if (name != null) {
 			sb.append(" and name like ?");
 			params.add(name);
 		}

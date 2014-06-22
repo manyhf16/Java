@@ -7,7 +7,11 @@
 <title>Welcome</title>
 </head>
 <body>
-	<s:property value="result" />
+	<ul>
+		<s:iterator value="result">
+		<li><s:property value="name" /></li>
+		</s:iterator>
+	</ul>
 	<s:debug />
 </body>
 </html>

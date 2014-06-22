@@ -19,9 +19,9 @@ import com.opensymphony.xwork2.interceptor.PreResultListener;
 
 @SuppressWarnings("serial")
 public class JsonResultInterceptor implements Interceptor {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(JsonResultInterceptor.class);
-	
+
 	private ObjectMapper mapper;
 
 	@Override

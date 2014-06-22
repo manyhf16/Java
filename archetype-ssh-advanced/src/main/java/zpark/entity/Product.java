@@ -17,13 +17,14 @@ import javax.persistence.TableGenerator;
 public class Product implements Serializable {
 
 	@Id
-//	@GeneratedValue(strategy = GenerationType.TABLE, generator = "product_tg")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	// @GeneratedValue(strategy = GenerationType.TABLE, generator =
+	// "product_tg")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	private String name;
 
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
 

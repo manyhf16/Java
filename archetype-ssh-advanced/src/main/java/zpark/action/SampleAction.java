@@ -1,26 +1,29 @@
 package zpark.action;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts2.ServletActionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import zpark.entity.SampleEntity;
 import zpark.service.SampleService;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.PreResultListener;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Controller
 @Scope("prototype")
-public class SampleAction {
+@JsonSerialize(using = SampleAction.class)
+public class SampleAction extends JsonSerializer<SampleAction> {
 
 	private static Logger logger = LoggerFactory.getLogger(SampleAction.class);
 
@@ -29,8 +32,8 @@ public class SampleAction {
 
 	private String name;
 
-	private String result;
-	
+	private List<SampleEntity> result;
+
 	public String getName() {
 		return name;
 	}
@@ -39,25 +42,32 @@ public class SampleAction {
 		this.name = name;
 	}
 
-	public String getResult() {
+	public List<SampleEntity> getResult() {
 		return result;
 	}
 
-	public void setResult(String result) {
+	public void setResult(List<SampleEntity> result) {
 		this.result = result;
 	}
 
 	public String execute() {
-		
 		if (name != null) {
 			logger.info("sample action method...");
-			result = "ok";
-			result = sampleService.sample();
+			result = sampleService.findAll();
 			return "success";
 		} else {
-			result = "name can't be null";
 			return "input";
 		}
+	}
+
+	@Override
+	public void serialize(SampleAction action, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+		jgen.writeStartObject();
+		jgen.writeStringField("name", action.getName());
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("value", action.getResult());
+		jgen.writeObjectField("result", map);
+		jgen.writeEndObject();
 	}
 
 }

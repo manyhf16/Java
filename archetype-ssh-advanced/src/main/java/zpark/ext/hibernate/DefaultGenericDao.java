@@ -67,7 +67,7 @@ public class DefaultGenericDao<T, ID extends Serializable> implements GenericDao
 	public List<T> findAll() {
 		return template.findByCriteria(DetachedCriteria.forClass(entityClass));
 	}
-	
+
 	@Override
 	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, Object... objects) {
 		Page<T> page = new Page<T>();
@@ -79,7 +79,7 @@ public class DefaultGenericDao<T, ID extends Serializable> implements GenericDao
 		page.setTotal(total.intValue());
 		return page;
 	}
-	
+
 	@Override
 	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, List<Object> objects) {
 		Page<T> page = new Page<T>();
@@ -91,11 +91,16 @@ public class DefaultGenericDao<T, ID extends Serializable> implements GenericDao
 		page.setTotal(total.intValue());
 		return page;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public T findOne(final String hql, final Object... objects) {
 		return (T) template.findOne(entityClass, hql, objects);
 	}
-	
+
+	@Override
+	public <W> W findOne(Class<W> c, String hql, Object... objects) {
+		return (W) template.findOne(c, hql, objects);
+	}
+
 }

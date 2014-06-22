@@ -50,16 +50,16 @@ public class GenericDaoProxyFactoryBean implements FactoryBean<Object> {
 				Query q = m.getAnnotation(Query.class);
 				Object[][] parameterAnnotations = m.getParameterAnnotations();
 				List<Object> normalParams = new ArrayList<Object>();
-				if (m.getName().startsWith("find") && q != null && parameterAnnotations.length > 2) {					
+				if (m.getName().startsWith("find") && q != null && parameterAnnotations.length > 2) {
 					StringBuilder hql = new StringBuilder(128);
 					hql.append(q.hql());
-					StringBuilder count = new StringBuilder(128);	
+					StringBuilder count = new StringBuilder(128);
 					boolean paramSet = false;
-					for(int i = 0; i< mi.getArguments().length; i++) {
-						if(mi.getArguments()[i] instanceof QueryBuilder) {
+					for (int i = 0; i < mi.getArguments().length; i++) {
+						if (mi.getArguments()[i] instanceof QueryBuilder) {
 							QueryBuilder qb = (QueryBuilder) mi.getArguments()[i];
 							hql.append(" where 1=1 ");
-							qb.build(hql, normalParams);	
+							qb.build(hql, normalParams);
 							paramSet = true;
 							break;
 						}
@@ -67,7 +67,7 @@ public class GenericDaoProxyFactoryBean implements FactoryBean<Object> {
 					count.append("select count(*) ").append(hql);
 					// PageNo, PageSize 以参数上的注解优先, 如果参数上没有加注解，则使用方法上相应注解的值
 					Integer no = q.pageNo();
-					Integer size = q.pageSize();					
+					Integer size = q.pageSize();
 					for (int i = 0; i < parameterAnnotations.length; i++) {
 						MethodParameter mp = new MethodParameter(m, i);
 						PageNo pageNo = mp.getParameterAnnotation(PageNo.class);
@@ -93,12 +93,12 @@ public class GenericDaoProxyFactoryBean implements FactoryBean<Object> {
 						if (mi.getArguments()[mp.getParameterIndex()] instanceof QueryBuilder) {
 							continue;
 						}
-						if(!paramSet) {
+						if (!paramSet) {
 							normalParams.add(mi.getArguments()[mp.getParameterIndex()]);
 						}
 					}
-					System.out.println(hql);
-					System.out.println(count);
+//					System.out.println(hql);
+//					System.out.println(count);
 					return target.findPage(no, size, hql.toString(), count.toString(), normalParams);
 				} else {
 					return m.invoke(target, mi.getArguments());

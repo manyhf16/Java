@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 	<!-- <context:property-placeholder location="classpath:db_oracle.properties" /> -->
 	<context:property-placeholder location="classpath:db_mysql.properties" />
-
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${jdbc.driver}" />
 		<property name="url" value="${jdbc.url}" />
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	<bean id="populator" class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+		<property name="sqlScriptEncoding" value="utf-8"/>
+		<property name="scripts" value="classpath:db_init.sql"/>
 	</bean>
 
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -19,8 +24,9 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<!-- Beware ! "create" for test purpose only, make sure change to "update" while deploy -->
+				<!-- Beware ! "create" for test purpose only, make sure change to "update" while deploy 
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				-->
 			</props>
 		</property>
 		<property name="packagesToScan" value="zpark.entity" />

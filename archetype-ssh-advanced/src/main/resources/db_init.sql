@@ -1,0 +1,14 @@
+insert into category (id, name) values (1, '电子产品');
+insert into product (id, name, category_id) values (1, 'iPad', 1);
+insert into product (id, name, category_id) values (2, 'iPhone', 1);
+insert into pk_table(table_name, next_value) values ('category', 2);
+insert into pk_table(table_name, next_value) values ('product', 3);
+insert into sampleentity(id, name) values(1, '赵一伤');
+insert into sampleentity(id, name) values(2, '钱二败');
+insert into sampleentity(id, name) values(3, '孙三毁');
+insert into sampleentity(id, name) values(4, '李四摧');
+insert into sampleentity(id, name) values(5, '周五输');
+insert into sampleentity(id, name) values(6, '吴六破');
+insert into sampleentity(id, name) values(7, '郑七灭');
+insert into sampleentity(id, name) values(8, '王八衰');
+insert into pk_table(table_name, next_value) values ('sampleentity', 9);

@@ -3,13 +3,13 @@ package zpark.ext.query;
 import java.util.List;
 
 public class Page<T> {
-	
+
 	private int pageNo;
-	
+
 	private int pageSize;
-	
+
 	private List<T> list;
-	
+
 	private int total;
 
 	public int getPageNo() {

@@ -20,32 +20,35 @@ import org.springframework.util.ClassUtils;
 /**
  * 代理类工厂注册器
  * 
- * <p>因为每个dao接口需要一个代理类工厂，因此为了方便起见，不是在spring配置文件中一个个注册，而是利用此类统一注册代理类工厂</p>
+ * <p>
+ * 因为每个dao接口需要一个代理类工厂，因此为了方便起见，不是在spring配置文件中一个个注册，而是利用此类统一注册代理类工厂
+ * </p>
+ * 
  * @author yihang
- *
+ * 
  */
 public class GenericDaoRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(GenericDaoRegistryPostProcessor.class);
 
 	private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
 	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(this.resourcePatternResolver);
-	
+
 	private String genericDaoInterface = "zpark.ext.hibernate.GenericDao";
-	
+
 	public void setGenericDaoInterface(String genericDaoInterface) {
 		this.genericDaoInterface = genericDaoInterface;
 	}
-	
+
 	private String daoPackageToScan;
-	
+
 	public void setDaoPackageToScan(String daoPackageToScan) {
 		this.daoPackageToScan = daoPackageToScan;
 	}
 
 	@Override
-	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {		
+	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 		try {
 			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
 					+ ClassUtils.convertClassNameToResourcePath(daoPackageToScan) + "/**/*.class";
@@ -76,11 +79,11 @@ public class GenericDaoRegistryPostProcessor implements BeanDefinitionRegistryPo
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		logger.debug("--------------beans begin--------------");
+		logger.info("--------------beans begin--------------");
 		for (String n : beanFactory.getBeanDefinitionNames()) {
-			logger.debug(n);
+			logger.info(n);
 		}
-		logger.debug("--------------beans end--------------");
+		logger.info("--------------beans end--------------");
 	}
 
 }
