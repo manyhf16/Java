@@ -29,6 +29,7 @@
 				-->
 			</props>
 		</property>
+		<property name="mappingDirectoryLocations" value="classpath:zpark/entity"></property>
 		<property name="packagesToScan" value="zpark.entity" />
 	</bean>
 

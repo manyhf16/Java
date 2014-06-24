@@ -15,6 +15,10 @@ public class TestDao extends TestBasic {
 
 	@Autowired
 	private SampleDao dao;
+	@Test
+	public void test0() {
+		initDatabase();
+	}
 
 	@Test
 	public void test1() {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="zpark.entity.User3" table="h3_user">
+		<id name="id">
+			<generator class="assigned"/>
+		</id>
+		<property name="name"/>
+		<one-to-one name="detail" />
+	</class>
+	<class name="zpark.entity.UserDetail3" table="h3_user_detail">
+		<id name="id">
+			<generator class="foreign">
+				<param name="property">user</param>
+			</generator>
+		</id>
+		<property name="detail"/>
+		<one-to-one name="user" constrained="true"/>
+	</class>
+	
+	<class name="zpark.entity.User4" table="h4_user">
+		<id name="id">
+			<generator class="assigned"/>
+		</id>
+		<property name="name"/>
+		<one-to-one name="detail" property-ref="user"/>
+	</class>
+	<class name="zpark.entity.UserDetail4" table="h4_user_detail">
+		<id name="id">
+			<generator class="assigned"/>
+		</id>
+		<property name="detail"/>
+		<many-to-one name="user" unique="true" column="user_id" />
+	</class>
+</hibernate-mapping>
