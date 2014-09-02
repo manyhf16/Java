@@ -2,9 +2,11 @@ package zpark.service.impl;
 
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +20,14 @@ public class SampleServiceImpl implements SampleService {
 
 	private static Logger logger = LoggerFactory.getLogger(SampleServiceImpl.class);
 
-	@Autowired
+//	@Autowired
 	private SampleDao sampleDao;
 
 	@Override
 	public List<SampleEntity> findAll() {
 		logger.info("sample service method...");
-		return sampleDao.findAll();
+		return null;
+//		return sampleDao.findAll();
 	}
 
 }

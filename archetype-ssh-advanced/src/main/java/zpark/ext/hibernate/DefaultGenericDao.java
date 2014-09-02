@@ -2,6 +2,7 @@ package zpark.ext.hibernate;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.criterion.DetachedCriteria;
 
@@ -69,7 +70,7 @@ public class DefaultGenericDao<T, ID extends Serializable> implements GenericDao
 	}
 
 	@Override
-	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, Object... objects) {
+	public Page<T> findPage(int pageNo, int pageSize, String hql, String counthql, Object... objects) {
 		Page<T> page = new Page<T>();
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
@@ -81,26 +82,53 @@ public class DefaultGenericDao<T, ID extends Serializable> implements GenericDao
 	}
 
 	@Override
-	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, List<Object> objects) {
+	public Page<T> findPage(int pageNo, int pageSize, String hql, String counthql, List<Object> objects) {
 		Page<T> page = new Page<T>();
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
 		List<T> list = template.findPage(pageNo, pageSize, hql, objects);
 		page.setList(list);
 		Long total = template.findOne(Long.class, counthql, objects);
+		page.setTotal(total.intValue());
+		return page;
+	}
+
+	@Override
+	public Page<T> findPage(int pageNo, int pageSize, String hql, String counthql, Map<String, Object> params) {
+		Page<T> page = new Page<T>();
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		List<T> list = template.findPage(pageNo, pageSize, hql, params);
+		page.setList(list);
+		Long total = template.findOne(Long.class, counthql, params);
 		page.setTotal(total.intValue());
 		return page;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T findOne(final String hql, final Object... objects) {
+	public T findOne(String hql, Object... objects) {
 		return (T) template.findOne(entityClass, hql, objects);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T findOne(String hql, Map<String, Object> params) {
+		return (T) template.findOne(entityClass, hql, params);
 	}
 
 	@Override
 	public <W> W findOne(Class<W> c, String hql, Object... objects) {
 		return (W) template.findOne(c, hql, objects);
+	}
+
+	@Override
+	public <W> W findOne(Class<W> c, String hql, Map<String, Object> params) {
+		return (W) template.findOne(c, hql, params);
+	}
+
+	public List<T> findList(String hql, Map<String, Object> params) {
+		return template.findList(hql, params);
 	}
 
 }

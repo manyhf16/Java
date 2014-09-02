@@ -2,6 +2,7 @@ package zpark.ext.hibernate;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import zpark.ext.query.Page;
 
@@ -27,12 +28,20 @@ public interface GenericDao<T, ID extends Serializable> {
 
 	public List<T> findAll();
 
-	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, Object... objects);
+	public Page<T> findPage(int pageNo, int pageSize, String hql, String counthql, Object... objects);
 
-	public Page<T> findPage(final int pageNo, final int pageSize, final String hql, final String counthql, List<Object> objects);
+	public Page<T> findPage(int pageNo, int pageSize, String hql, String counthql, List<Object> objects);
 
-	public T findOne(final String hql, final Object... objects);
+	public Page<T> findPage(int pageNo, int pageSize, String hql, String counthql, Map<String, Object> params);
+
+	public T findOne(String hql, Object... objects);
+
+	public T findOne(String hql, Map<String, Object> params);
+
+	public <W> W findOne(Class<W> c, String hql, Object... objects);
+
+	public <W> W findOne(Class<W> c, String hql, Map<String, Object> params);
 	
-	public <W> W findOne(Class<W> c, final String hql, final Object... objects) ;
+	public List<T> findList(String hql, Map<String, Object> params);
 
 }

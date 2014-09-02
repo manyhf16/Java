@@ -76,6 +76,7 @@ public class TestAction {
 		om.registerModule(hibernate3Module);		
 		StringWriter sw = new StringWriter();
 		om.writeValue(sw, e);
+		System.out.println(sw.toString());
 		Assert.assertEquals("{\"id\":1,\"name\":\"iPad\",\"category\":{\"id\":1,\"name\":\"电子产品\"}}", sw.toString());
 	}
 	

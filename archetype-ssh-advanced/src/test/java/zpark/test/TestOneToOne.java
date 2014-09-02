@@ -1,6 +1,11 @@
 package zpark.test;
 
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,7 +67,7 @@ public class TestOneToOne extends TestBasic {
 	@Test
 	public void test5() {
 		System.out.println("test5.............................");
-		User3 user = (User3) sessionFactory.openSession().get(User3.class, 1);
+		User3 user = (User3) sessionFactory.openSession().get(User3.class, 2);
 		System.out.println(user.getName());
 		System.out.println(user.getDetail().getClass());
 		System.out.println(user.getDetail().getDetail());
@@ -93,6 +98,15 @@ public class TestOneToOne extends TestBasic {
 		System.out.println(detail.getDetail());
 		System.out.println(detail.getUser().getClass());
 //		System.out.println(user.getDetail().getDetail());
+	}
+	
+	@Test
+	public void test9(){
+		Session session = sessionFactory.openSession();
+		Criteria c = session.createCriteria(User4.class);
+//		c.add(Restrictions.eq("name", "张三")).createCriteria("detail", "d").add(Restrictions.eq("d.detail", "张三详情"));
+		c.add(Restrictions.eq("name", "张三")).createAlias("detail", "d").add(Restrictions.eq("d.detail", "张三详情"));
+		System.out.println(c.list());
 	}
 
 }

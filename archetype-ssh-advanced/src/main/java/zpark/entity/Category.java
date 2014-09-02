@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,11 +13,16 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("serial")
 @Entity
 @TableGenerator(name = "category_tg", table = "pk_table", pkColumnName = "table_name", pkColumnValue = "category", valueColumnName = "next_value", initialValue = 0, allocationSize = 1)
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Category implements Serializable {
 
 	@Id
@@ -26,7 +32,8 @@ public class Category implements Serializable {
 	private String name;
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-	@JsonIgnore
+	@JsonIgnore	
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	private Set<Product> products = new HashSet<Product>();
 
 	public int getId() {

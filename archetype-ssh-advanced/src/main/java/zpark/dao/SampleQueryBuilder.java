@@ -1,6 +1,6 @@
 package zpark.dao;
 
-import java.util.List;
+import java.util.Map;
 
 import zpark.ext.query.QueryBuilder;
 
@@ -14,14 +14,15 @@ public final class SampleQueryBuilder implements QueryBuilder {
 	}
 
 	@Override
-	public void build(StringBuilder sb, List<Object> params) {
+	public void build(StringBuilder sb, Map<String, Object> params) {
+		sb.append(" where 1=1");
 		if (id != null) {
-			sb.append(" and id > ?");
-			params.add(id);
+			sb.append(" and id > :id");
+			params.put("id", id);
 		}
 		if (name != null) {
-			sb.append(" and name like ?");
-			params.add(name);
+			sb.append(" and name like :name");
+			params.put("name", name);
 		}
 	}
 }

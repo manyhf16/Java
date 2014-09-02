@@ -18,4 +18,6 @@
   <uri name="http://cxf.apache.org/schemas/jaxws.xsd" uri="platform:/resource/XmlConfig/cxf/jaxws.xsd"/>
   <uri name="http://cxf.apache.org/schemas/jaxrs.xsd" uri="platform:/resource/XmlConfig/cxf/jaxrs.xsd"/>
   <public publicId="-//APACHE//DTD LOG4J 1.2//EN" uri="platform:/resource/XmlConfig/log4j/log4j.dtd" webURL="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd"/>
+  <public publicId="-//mybatis.org//DTD Config 3.0//EN" uri="platform:/resource/XmlConfig/mybatis/mybatis-3-config.dtd" webURL="http://mybatis.org/dtd/mybatis-3-config.dtd"/>
+  <public publicId="-//mybatis.org//DTD Mapper 3.0//EN" uri="platform:/resource/XmlConfig/mybatis/mybatis-3-mapper.dtd" webURL="http://mybatis.org/dtd/mybatis-3-mapper.dtd"/>
 </catalog>

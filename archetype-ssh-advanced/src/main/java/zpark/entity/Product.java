@@ -2,6 +2,7 @@ package zpark.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,15 +12,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @SuppressWarnings("serial")
 @Entity
 @TableGenerator(name = "product_tg", table = "pk_table", pkColumnName = "table_name", pkColumnValue = "product", valueColumnName = "next_value", initialValue = 0, allocationSize = 1)
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Product implements Serializable {
 
 	@Id
-	// @GeneratedValue(strategy = GenerationType.TABLE, generator =
-	// "product_tg")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "product_tg")
 	private int id;
 
 	private String name;

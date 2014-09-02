@@ -32,4 +32,32 @@
 		<property name="detail"/>
 		<many-to-one name="user" unique="true" column="user_id" />
 	</class>
+	
+	<class name="zpark.entity.City">
+		<id name="id">
+			<generator class="enhanced-table">
+				<param name="segment_value">city</param>
+				<param name="increment_size">2</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<property name="name"/>
+	</class>
+	
+	<class name="zpark.entity.Order5" table="h_order5">
+		<id name="id">
+			<generator class="assigned"></generator>
+		</id>
+		<many-to-one name="user" column="u_id" cascade="save-update"/>
+	</class>
+	<class name="zpark.entity.User5" table="h_user5">
+		<id name="id">
+			<generator class="assigned"></generator>
+		</id>
+		<property name="name"></property>
+		<set name="orders" cascade="all">
+			<key column="u_id"></key>
+			<one-to-many class="zpark.entity.Order5"/>
+		</set>
+	</class>
 </hibernate-mapping>

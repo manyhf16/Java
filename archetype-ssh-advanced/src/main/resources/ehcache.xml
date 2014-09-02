@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns="http://ehcache.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ehcache.org http://ehcache.org/ehcache.xsd ">
+	<cache name="zpark.entity.SampleEntity" eternal="true"  maxElementsInMemory="100" memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+	<cache name="zpark.entity.Category" eternal="true"  maxElementsInMemory="100" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<cache name="zpark.entity.Category.products" eternal="true"  maxElementsInMemory="100" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<cache name="zpark.entity.Product" eternal="true"  maxElementsInMemory="100" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<cache name="org.hibernate.cache.StandardQueryCache" eternal="true"  maxElementsInMemory="100" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<cache name="org.hibernate.cache.UpdateTimestampsCache" eternal="true"  maxElementsInMemory="100" memoryStoreEvictionPolicy="LRU">
+	</cache>
+</ehcache>

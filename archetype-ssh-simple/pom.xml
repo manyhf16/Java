@@ -45,6 +45,12 @@
 	</properties>
 
 	<dependencies>
+	
+	<dependency>
+	<groupId>commons-dbcp</groupId>
+	<artifactId>commons-dbcp</artifactId>
+	<version>1.4</version>
+</dependency>
 		<!-- DB Driver -->
 		<dependency>
 			<groupId>mysql</groupId>

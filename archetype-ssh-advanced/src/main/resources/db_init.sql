@@ -20,3 +20,6 @@ insert into h3_user(id, name) values (1, '张三');
 insert into h3_user_detail(id, detail) values(1, '张三详情');
 insert into h4_user(id, name) values (1, '张三');
 insert into h4_user_detail(id, detail, user_id) values(10, '张三详情', 1);
+insert into h_user5(id, name) values(10, '张三');
+insert into h_user5(id, name) values(11, '李四');
+insert into h_order5(id, u_id) values(1, 10);
