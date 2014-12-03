@@ -13,20 +13,20 @@ import zpark.action.SampleAction;
 @ContextConfiguration(locations = "classpath:spring/application-config.xml")
 public class TestAction {
 
-	@Autowired
-	private SampleAction action;
-	
-	@Test
-	public void test1() {
-		String view = action.execute();
-		Assert.assertEquals("input", view);
-	}
-	
-	@Test
-	public void test2() {
-		action.setName("not null");
-		String view = action.execute();
-		Assert.assertEquals("success", view);
-	}
-	
+  @Autowired
+  private SampleAction action;
+
+  @Test
+  public void test1() {
+    String view = action.execute();
+    Assert.assertEquals("input", view);
+  }
+
+  @Test
+  public void test2() {
+    action.setName("not null");
+    String view = action.execute();
+    Assert.assertEquals("success", view);
+  }
+
 }

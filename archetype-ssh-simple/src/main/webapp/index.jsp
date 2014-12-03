@@ -16,7 +16,6 @@
 	<a href="${pageContext.request.contextPath}/sample.action?name=test">查看示例</a>
 	<br />
 	<s:a action="sample?name=test">查看示例(struts 标签)</s:a>
-
 	<form action=""></form>
 	<s:debug></s:debug>
 </body>
