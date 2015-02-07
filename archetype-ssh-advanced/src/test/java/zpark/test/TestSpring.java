@@ -55,6 +55,7 @@ public class TestSpring {
 		ClassLoader cl = new ClassLoader(Thread.currentThread().getContextClassLoader()) {
 			@Override
 			protected Class<?> findClass(String name) throws ClassNotFoundException {
+				System.out.println(name);
 				return defineClass(name, clazz, 0, clazz.length);
 			}
 		};

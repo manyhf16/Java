@@ -20,7 +20,7 @@ public class SampleServiceImpl implements SampleService {
 
 	private static Logger logger = LoggerFactory.getLogger(SampleServiceImpl.class);
 
-//	@Autowired
+	@Autowired
 	private SampleDao sampleDao;
 
 	@Override

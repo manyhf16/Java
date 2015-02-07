@@ -69,10 +69,11 @@ public class TestAction {
 	
 	@Test
 	public void test4 () throws JsonGenerationException, JsonMappingException, IOException {
-		Product e = dao.findOne(1);
+//		Product e = dao.findOne(1);
+		Product e = dao.findOne(Product.class, "from Product paramPartParser inner join fetch paramPartParser.category where paramPartParser.id=?", 1);
 		ObjectMapper om = new ObjectMapper();
 		Hibernate3Module hibernate3Module = new Hibernate3Module();
-		hibernate3Module.enable(Feature.FORCE_LAZY_LOADING);
+//		hibernate3Module.enable(Feature.FORCE_LAZY_LOADING);
 		om.registerModule(hibernate3Module);		
 		StringWriter sw = new StringWriter();
 		om.writeValue(sw, e);

@@ -5,16 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Query {
-
-	public String hql();
-
-	public int pageNo() default 1;
-
-	public int pageSize() default 10;
-	
-	public boolean pageResult() default true;
-
+public @interface NamedPlaceholder {
+    public String value();
 }

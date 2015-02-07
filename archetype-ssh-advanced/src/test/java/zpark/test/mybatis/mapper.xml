@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="zpark.test.mybatis.UserDao">
+	<cache></cache>
+	
+	<select id="selectUserById"  parameterType="int" resultType="zpark.test.mybatis.User">
+		select id,name as namea from day1_user where id = #{a}
+	</select>
+</mapper>

@@ -20,6 +20,9 @@
 			<result name="success">/WEB-INF/view/sampleView.jsp</result>
 			<result name="input">/index.jsp</result>
 		</action>
+		
+		<action name="test" class="zpark.action.TestAction">
+		</action>
 	</package>
 
 </struts>

@@ -15,7 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuppressWarnings("serial")
 @Entity
 @TableGenerator(name = "sample_tg", table = "pk_table", pkColumnName = "table_name", pkColumnValue = "sampleentity", valueColumnName = "next_value", initialValue = 0, allocationSize = 1)
-@Cacheable
+//@Cacheable
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SampleEntity implements Serializable {
 

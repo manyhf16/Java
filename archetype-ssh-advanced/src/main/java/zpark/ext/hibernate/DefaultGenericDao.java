@@ -127,8 +127,8 @@ public class DefaultGenericDao<T, ID extends Serializable> implements GenericDao
 		return (W) template.findOne(c, hql, params);
 	}
 
-	public List<T> findList(String hql, Map<String, Object> params) {
-		return template.findList(hql, params);
+	public List<T> findList(int pageNo, int pageSize, String hql, Map<String, Object> params) {
+		return template.findList(pageNo, pageSize, hql, params);
 	}
 
 }

@@ -20,9 +20,9 @@ import org.springframework.util.ClassUtils;
 /**
  * 代理类工厂注册器
  * 
- * <p>
+ * <paramPartParser>
  * 因为每个dao接口需要一个代理类工厂，因此为了方便起见，不是在spring配置文件中一个个注册，而是利用此类统一注册代理类工厂
- * </p>
+ * </paramPartParser>
  * 
  * @author yihang
  * 

@@ -37,12 +37,15 @@ public class TestSort {
 	public void testBubble() {
 		Integer[] array = { 9, 10, 15, 14, 13, 8 };
 		BubbleSort sort = new BubbleSort();
+		final StringBuilder sb = new StringBuilder();
 		sort.sort(array, new Comparator<Integer>() {
 			@Override
 			public int compare(Integer o1, Integer o2) {
+			    sb.append("_");
 				return o1.compareTo(o2);
 			}
 		});
+		System.out.println(sb.toString().length());
 		Assert.assertArrayEquals(new Integer[] { 8, 9, 10, 13, 14, 15 }, array);
 	}
 

@@ -12,11 +12,12 @@
 			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
 		</layout>
 	</appender>
-
+	<!-- zpark.ext.log.WebLogAppender -->
 	<appender name="sample-log-console" class="org.apache.log4j.ConsoleAppender">
 		<param name="encoding" value="GBK" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %5p %c - %m%n" />
+			<!-- %d{yyyy-MM-dd HH:mm:ss} -->
+			<param name="ConversionPattern" value="%5p %c - %m%n" />
 		</layout>
 	</appender>
 
@@ -24,10 +25,18 @@
 	<!-- 日志写出器：每一个logger可以有多个输出目的地和输出方式 -->
 	<!-- ===================================================================== -->
 	<logger name="zpark" additivity="false">
-		<level value="INFO" />
+		<level value="debug" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
 	<logger name="org.hibernate.SQL" additivity="false">
+		<level value="trace" />
+		<appender-ref ref="sample-log-console" />
+	</logger>
+	<logger name="org.springframework.jdbc.datasource" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="sample-log-console" />
+	</logger>
+	<!-- <logger name="org.hibernate.SQL" additivity="false">
 		<level value="debug" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
@@ -35,11 +44,8 @@
 		<level value="trace" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
-	<logger name="org.springframework" additivity="false">
-		<level value="ERROR" />
-		<appender-ref ref="sample-log-console" />
-	</logger>
-	<logger name="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" additivity="false">
+	 -->
+	<!-- <logger name="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" additivity="false">
 		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
@@ -50,7 +56,7 @@
 	<logger name="org.springframework.beans.factory.annotation.InjectionMetadata" additivity="false">
 		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
-	</logger>
+	</logger> -->
 
 
 	<!-- ===================================================================== -->

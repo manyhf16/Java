@@ -1,8 +1,6 @@
 package zpark.ext.hibernate;
 
-import java.lang.reflect.Array;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -120,17 +118,18 @@ public class HibernateTemplateExt extends HibernateTemplate {
 	
 	private void processMapParams(Query query, final Map<String, Object> params) {
 		if(params != null) {
-			for(Map.Entry<String, Object> entry : params.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue();
-				if(value instanceof Collection) {
-					query.setParameterList(key, (Collection<?>)value);
-				} else if(value instanceof Array) {
-					query.setParameterList(key, (Object[])value);
-				} else {
-					query.setParameter(key, value);
-				}						
-			}
+			query.setProperties(params);
+//			for(Map.Entry<String, Object> entry : params.entrySet()) {
+//				String key = entry.getKey();
+//				Object value = entry.getValue();
+//				if(value instanceof Collection) {
+//					query.setParameterList(key, (Collection<?>)value);
+//				} else if(value instanceof Array) {
+//					query.setParameterList(key, (Object[])value);
+//				} else {
+//					query.setParameter(key, value);
+//				}						
+//			}
 		}
 	}
 	
@@ -157,6 +156,21 @@ public class HibernateTemplateExt extends HibernateTemplate {
 				Query query = session.createQuery(hql);
 				prepareQuery(query);
 				processMapParams(query, params);
+				return (List<T>) query.list();
+			}
+		});
+	}
+	
+	@SuppressWarnings({"unchecked"})
+	public <T> List<T> findList(final int pageNo, final int pageSize, final String hql, final Map<String, Object> params) {
+		return executeWithNativeSession(new HibernateCallback<List<T>>() {
+			@Override
+			public List<T> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery(hql);
+				prepareQuery(query);
+				processMapParams(query, params);
+				query.setFirstResult((pageNo - 1) * pageSize);
+				query.setMaxResults(pageSize);
 				return (List<T>) query.list();
 			}
 		});

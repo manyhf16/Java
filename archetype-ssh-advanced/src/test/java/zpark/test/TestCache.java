@@ -1,7 +1,11 @@
 package zpark.test;
 
+import java.util.List;
+
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,6 +57,22 @@ public class TestCache extends TestBasic {
 		session.createQuery("from Category").setCacheable(true).list();
 //		session.createQuery("from Category").setCacheable(true).list();
 //		session.createQuery("from Category").setCacheable(true).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test4() {
+//		initDatabase();
+		Session session = sessionFactory.openSession();
+//		List<Category> list = session.createCriteria(Category.class)
+//				.setFetchMode("products", FetchMode.JOIN).list();
+//		List<Category> list = session.createCriteria(Category.class).createAlias("products", "p", CriteriaSpecification.LEFT_JOIN).list();
+		List<Category> list = session.createQuery("select distinct c from Category c left join fetch c.products p where p.price > 3000 order by c.id")
+				.list();
+		for(Category c : list) {
+			System.out.println(c.getName());
+			System.out.println(c.getProducts());
+		}
 	}
 
 }

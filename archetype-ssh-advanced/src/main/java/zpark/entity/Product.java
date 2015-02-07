@@ -19,7 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @TableGenerator(name = "product_tg", table = "pk_table", pkColumnName = "table_name", pkColumnValue = "product", valueColumnName = "next_value", initialValue = 0, allocationSize = 1)
 @Cacheable
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Product implements Serializable {
 
 	@Id
@@ -27,6 +27,8 @@ public class Product implements Serializable {
 	private int id;
 
 	private String name;
+
+	private Integer price;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
@@ -48,6 +50,14 @@ public class Product implements Serializable {
 		this.name = name;
 	}
 
+	public Integer getPrice() {
+		return price;
+	}
+
+	public void setPrice(Integer price) {
+		this.price = price;
+	}
+
 	public Category getCategory() {
 		return category;
 	}
@@ -56,25 +66,4 @@ public class Product implements Serializable {
 		this.category = category;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Product other = (Product) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
 }
