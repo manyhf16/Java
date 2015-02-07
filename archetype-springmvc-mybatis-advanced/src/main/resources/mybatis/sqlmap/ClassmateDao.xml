@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="zpark.dao.ClassmateDao">
+	<cache readOnly="false"></cache>
+	<sql id="all_sql">select id, c.username, name, mobile, email, lost from classmate c</sql>
+	<sql id="one_sql">select c.id, c.username, password, c.name, gender, birthday, constellation, mobile, email, organization, remark, lost, location_id, l.name location_name,tag
+		from classmate c left join location l on c.location_id = l.id left join tag t on c.username = t.username</sql>
+	<!-- 查询所有未失联 -->
+	<select id="findAll" resultMap="allMap">
+		<include refid="all_sql"/> where lost = 0 order by birthday
+	</select>
+	<!-- 查询所有失联同学 -->
+	<select id="findAllLost" resultMap="allMap" parameterType="string">
+		<include refid="all_sql"/> where lost = 1
+	</select>
+	<!-- 根据性别查询 -->
+	<select id="findByGender" resultMap="allMap" parameterType="string">
+		<include refid="all_sql"/> where gender=#{gender} order by birthday
+	</select>
+	<!-- 根据出生年份查询 -->
+	<select id="findByYear" resultMap="allMap" parameterType="int">
+		<include refid="all_sql"/> where year(birthday)=#{year} order by birthday
+	</select>
+	<!-- 根据出生月份查询 -->
+	<select id="findByMonth" resultMap="allMap" parameterType="int">
+		<include refid="all_sql"/> where month(birthday)=#{month} order by birthday
+	</select>
+	<!-- 根据出生年份、月份查询 -->
+	<select id="findByYearAndMonth" resultMap="allMap" parameterType="map">
+		<include refid="all_sql"/> where year(birthday)=#{year} and month(birthday)=#{month} order by birthday
+	</select>
+	<!-- 根据星座查询 -->
+	<select id="findByConstellation" resultMap="allMap" parameterType="string">
+		<include refid="all_sql"/> where constellation=#{constellation}
+	</select>
+	<!-- 根据区域查询 -->
+	<select id="findByLocation" resultMap="allMap" parameterType="int">
+		<include refid="all_sql"/> where location_id=#{id}
+	</select>
+	<!-- 根据Tag查询 -->
+	<select id="findByTag" resultMap="allMap" parameterType="string">
+		<include refid="all_sql"/> inner join tag t on c.username = t.username where t.tag = #{tag}
+	</select>
+	<!-- 根据Name查询 -->
+	<select id="findByName" resultMap="allMap" parameterType="string">
+		<include refid="all_sql"/> where c.name like #{name}
+	</select>
+	<!-- 根据Id查询 -->
+	<select id="findById" resultMap="oneMap" parameterType="int">
+		<include refid="one_sql"/> where c.id=#{id}
+	</select>
+	<!-- 根据username查询 -->
+	<select id="findByUsername" resultMap="oneMap" parameterType="string">
+		<include refid="one_sql"/> where c.username=#{username}
+	</select>	
+	<resultMap type="zpark.entity.Classmate" id="allMap">
+		<id property="id" column="id" />
+		<result property="username" column="username" />
+		<result property="name" column="name" />
+		<result property="mobile" column="mobile" />
+		<result property="email" column="email" />
+		<result property="lost" column="lost" />
+	</resultMap>
+	<resultMap type="zpark.entity.Classmate" id="oneMap">
+		<id property="id" column="id" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+		<result property="name" column="name" />
+		<result property="gender" column="gender" />
+		<result property="birthday" column="birthday" />
+		<result property="mobile" column="mobile" />
+		<result property="email" column="email" />
+		<result property="organization" column="organization" />
+		<result property="remark" column="remark" />
+		<result property="lost" column="lost" />
+		<association property="location" javaType="zpark.entity.Location">
+			<id property="id" column="location_id" />
+			<result property="name" column="location_name" />
+		</association>
+		<collection property="tags" ofType="string">
+			<result column="tag"/>
+		</collection>
+	</resultMap>
+	<update id="update" parameterType="zpark.entity.Classmate">
+		update classmate set birthday=#{birthday}, constellation=#{constellation}, mobile=#{mobile}, email=#{email}, 
+			organization=#{organization}, remark=#{remark}, lost=#{lost}, location_id=#{location.id}
+			where id=#{id}
+	</update>
+	<update id="updatePassword" parameterType="map">
+		update classmate set password=#{password} where id=#{classmateId}
+	</update>
+	<update id="deleteTags" parameterType="string">
+		delete from tag where username=#{username}
+	</update>
+	<update id="insertTags" parameterType="map">
+		insert into tag (tag, username) values 
+		<foreach collection="tags" item="t" separator=",">(#{t}, #{username})</foreach>
+	</update>	
+	<select id="findLocationById" resultType="zpark.entity.Location" parameterType="int">
+		select id, name from location where id=#{id}
+	</select>
+	<select id="findLocationByName" resultType="zpark.entity.Location" parameterType="string">
+		select id, name from location where name=#{name}
+	</select>
+	<select id="findAllLocations" resultType="zpark.entity.Location">
+		select id, name from location;
+	</select>
+	<insert id="insertLocation" parameterType="zpark.entity.Location" useGeneratedKeys="true" keyProperty="id">
+		insert into location (name) values (#{name})
+	</insert>
+	<delete id="deleteUnusedLocations">
+		delete from location where not exists (select id from classmate where classmate.location_id=location.id)
+	</delete>
+	<select id="findConstellation" parameterType="date" resultType="string">
+		select name from constellation 
+		where str_to_date(CONCAT('2000-',month(#{date}),'-',day(#{date})),'%Y-%m-%d') between begin and end 
+			and (month(#{date})-month(begin)) in (0,1,-11)
+	</select>
+</mapper>

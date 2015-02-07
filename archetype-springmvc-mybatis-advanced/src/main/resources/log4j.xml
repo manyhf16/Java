@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd" >
+<log4j:configuration>
+	<!-- ===================================================================== -->
+	<!-- 以下是appender的定义，定义日志输出的目的地、输出方式及过滤级别 -->
+	<!-- ===================================================================== -->
+	<appender name="sample-log" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="/logs/log4j-study.log" />
+		<param name="encoding" value="utf-8" />
+		<param name="datePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="sample-log-console" class="org.apache.log4j.ConsoleAppender">
+		<param name="encoding" value="utf-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %5p %c - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- ===================================================================== -->
+	<!-- 日志写出器：每一个logger可以有多个输出目的地和输出方式 -->
+	<!-- ===================================================================== -->
+	<logger name="zpark" additivity="false">
+		<level value="trace" />
+		<appender-ref ref="sample-log-console" />
+	</logger>
+	<logger name="org.springframework.transaction" additivity="false">
+		<level value="error" />
+		<appender-ref ref="sample-log-console" />
+	</logger>
+	<logger name="org.springframework.jdbc" additivity="false">
+		<level value="error" />
+		<appender-ref ref="sample-log-console" />
+	</logger>
+
+	<!-- ===================================================================== -->
+	<!-- Root logger 所有logger的基类，没有定义的logger将会使用root logger -->
+	<!-- ===================================================================== -->
+	<root>
+		<level value="error" />
+		<appender-ref ref="sample-log-console" />
+	</root>
+
+</log4j:configuration>
