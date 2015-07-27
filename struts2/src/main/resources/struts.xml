@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd" >
+<struts>
+	<!-- ===== action扩展名，限定为.action ===== -->
+	<constant name="struts.action.extension" value="do,action,,"></constant>
+	<!-- ===== 国际化资源文件 ===== -->
+	<constant name="struts.custom.i18n.resources" value="/zpark/struts2/i18n/aaa"></constant>
+	<!-- ===== 上传文件最大限制 ===== -->
+	<constant name="struts.multipart.maxSize" value="188448561"></constant>
+	<!-- ===== 调试模式 ===== -->
+	<constant name="struts.devMode" value="true"></constant>
+	<!-- ===== 字符编码 ===== -->
+	<constant name="struts.i18n.encoding" value="utf-8"></constant>
+
+	<!-- ===== day1 package ===== -->
+	<package name="day1" extends="struts-default" namespace="/day1">
+		<action name="hello" class="zpark.struts2.action.day1.WelcomeAction" method="execute">
+			<result name="success">/day1/success.jsp</result>
+			<result name="error">/day1/error.jsp</result>
+		</action>
+
+		<action name="scope" class="zpark.struts2.action.day1.ScopeAction">
+			<result name="success">/day1/scope.jsp</result>
+		</action>
+	</package>
+
+	<!-- ===== day2 package ===== -->
+	<package name="day2" extends="struts-default" namespace="/day2">
+		<action name="parameter" class="zpark.struts2.action.day2.ParameterAction">
+			<result name="success">/day2/parameter.jsp</result>
+			<result name="input">/day2/parameter.jsp</result>
+		</action>
+
+		<action name="action1" class="zpark.struts2.action.day2.Action1">
+			<result name="success" type="redirect">/day2/action2.action</result>
+		</action>
+
+		<action name="action2" class="zpark.struts2.action.day2.Action2">
+			<result name="success" type="dispatcher">/day2/action2.jsp</result>
+		</action>
+	</package>
+
+	<!-- ===== day3 package ===== -->
+	<package name="day3" extends="struts-default" namespace="/day3">
+		<action name="root" class="zpark.struts2.action.day3.RootAction">
+			<result name="success">/day3/root.jsp</result>
+		</action>
+		<action name="context" class="zpark.struts2.action.day3.ContextAction">
+			<result name="success">/day3/context.jsp</result>
+		</action>
+	</package>
+
+	<!-- ===== day4 package ===== -->
+	<package name="day4" extends="struts-default" namespace="/day4">
+		<action name="normal" class="zpark.struts2.action.day4.NormalAction">
+			<result name="success">/day4/normal.jsp</result>
+		</action>
+		<action name="model" class="zpark.struts2.action.day4.ModelDrivenAction">
+			<result name="success">/day4/model.jsp</result>
+		</action>
+		<action name="list" class="zpark.struts2.action.day4.ListAction">
+			<result name="success">/day4/list.jsp</result>
+		</action>
+		<action name="map" class="zpark.struts2.action.day4.MapAction">
+			<result name="success">/day4/map.jsp</result>
+		</action>
+	</package>
+
+	<!-- ===== day5 package ===== -->
+	<package name="day5" extends="struts-default" namespace="/day5">
+		<default-action-ref name="ognl" />
+		<action name="ognl" class="zpark.struts2.action.day5.OgnlAction">
+			<result name="success">/day5/ognl.jsp</result>
+		</action>
+	</package>
+
+	<!-- ===== day6 package ===== -->
+	<package name="day6" extends="struts-default" namespace="/day6">
+		<action name="r_action1" class="zpark.struts2.action.day6.RedirectAction1">
+			<result name="success" type="redirect">
+				<param name="location">/day6/r_action2.action</param>
+				<!-- 原理实际是在重定向之前从用${n1}从值栈取出值，拼接到重定向地址之后 -->
+				<param name="n2">${n1}</param>
+			</result>
+			<!-- 注意：也可以写成下面的形式 但这种方式有个缺点，如果n1的值是中文，不会自动使用URLEncoder编码，会导致传递失败 <result name="success" type="redirect">/day6/action2.action?n2=${n1}</result> -->
+		</action>
+		<action name="r_action2" class="zpark.struts2.action.day6.RedirectAction2">
+			<result name="success">/day6/r_action2.jsp</result>
+		</action>
+
+		<action name="c_action1" class="zpark.struts2.action.day6.ChainAction1">
+			<result name="success" type="chain">
+				<param name="actionName">c_action2</param>
+			</result>
+		</action>
+
+		<action name="c_action2" class="zpark.struts2.action.day6.ChainAction2">
+			<result name="success">/day6/c_action2.jsp</result>
+		</action>
+
+		<action name="validation" class="zpark.struts2.action.day6.ValidationAction">
+			<result name="success">/day6/success.jsp</result>
+			<result name="input">/day6/input.jsp</result>
+		</action>
+	</package>
+
+	<!-- ===== day7 package ===== -->
+	<package name="day7" extends="struts-default" namespace="/day7">
+		<action name="captcha1" class="zpark.struts2.action.day7.CaptchaAction1">
+			<result name="success" type="stream" />
+		</action>
+		<action name="captcha2" class="zpark.struts2.action.day7.CaptchaAction2" />
+		<action name="crop" class="zpark.struts2.action.day7.CropAction">
+			<result name="success" type="stream" />
+		</action>		
+		<action name="watermark" class="zpark.struts2.action.day7.WatermarkAction">
+			<result name="success" type="stream" />
+		</action>
+		<action name="resize" class="zpark.struts2.action.day7.ResizeAction">
+			<result name="success" type="stream" />
+		</action>
+		<action name="base64" class="zpark.struts2.action.day7.Base64ImageAction">
+			<result name="success" type="stream" />
+		</action>
+	</package>
+	
+	<!-- ===== day8 package ===== -->
+	<package name="day8" extends="struts-default" namespace="/day8">
+		<interceptors>
+			<interceptor name="ajax" class="zpark.ext.struts.JsonResultInterceptor"/>
+			<interceptor name="flash" class="zpark.ext.struts.FlashScopeInterceptor"/>
+			<interceptor name="loginCheck" class="zpark.struts2.action.day8.LoginCheckInterceptor"/>
+			<!-- 拦截器栈a1: 默认需要处理ajax, 检查登录, 和系统拦截器 -->
+			<interceptor-stack name="a1">
+				<interceptor-ref name="ajax"/>
+				<interceptor-ref name="flash"/>
+				<interceptor-ref name="loginCheck"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+			<!-- 拦截器栈a2: 只需要处理ajax和系统拦截器 -->
+			<interceptor-stack name="a2">
+				<interceptor-ref name="ajax"/>
+				<interceptor-ref name="flash"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+			<!-- 拦截器栈a3: 需要处理ajax, 检查登录, 和paramsPrepareParamsStack拦截器 -->
+			<interceptor-stack name="a3">
+				<interceptor-ref name="ajax"/>
+				<interceptor-ref name="flash"/>
+				<interceptor-ref name="loginCheck"/>
+				<interceptor-ref name="paramsPrepareParamsStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="a1"/>
+		<global-results>
+			<result name="login" type="redirect">/day8/login.action</result>
+		</global-results>
+		<action name="login">
+			<interceptor-ref name="a2"/>
+			<result name="success">/day8/login.jsp</result>
+		</action>
+		<action name="login-check" class="zpark.struts2.action.day8.LoginCheckAction" method="login">
+			<interceptor-ref name="a2"/>			
+			<result name="success" type="redirect">/day8/login.action</result>
+		</action>
+		<action name="logout" class="zpark.struts2.action.day8.LoginCheckAction" method="logout">
+			<result name="success" type="redirect">/day8/login.action</result>
+		</action>
+		<action name="find" class="zpark.struts2.action.day8.FindAction">
+			<result name="success">/day8/find.jsp</result>
+		</action>
+		<action name="update" class="zpark.struts2.action.day8.UpdateAction">
+			<interceptor-ref name="a3"/>
+			<result name="success" type="redirect">
+				<param name="location">/day8/find.action</param>
+				<param name="user.username">${user.username}</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- ===== day9 package ===== -->
+	<package name="day9" extends="struts-default" abstract="true">
+		<interceptors>
+			<interceptor name="ajax" class="zpark.ext.struts.JsonResultInterceptor"/>
+			<interceptor name="loginCheck" class="zpark.struts2.action.day8.LoginCheckInterceptor"/>
+			<!-- 拦截器栈a1: 默认需要处理ajax, 检查登录, 和系统拦截器 -->
+			<interceptor-stack name="a1">
+				<interceptor-ref name="ajax"/>
+				<interceptor-ref name="loginCheck"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+			<!-- 拦截器栈a2: 只需要处理ajax和系统拦截器 -->
+			<interceptor-stack name="a2">
+				<interceptor-ref name="ajax"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+			<!-- 拦截器栈a3: 需要处理ajax, 检查登录, 和paramsPrepareParamsStack拦截器 -->
+			<interceptor-stack name="a3">
+				<interceptor-ref name="ajax"/>
+				<interceptor-ref name="loginCheck"/>
+				<interceptor-ref name="paramsPrepareParamsStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="a1"/>
+	</package>
+	
+	<!-- ===== day10 package ===== -->
+	<package name="day10" extends="struts-default" abstract="true">
+		<interceptors>
+			<interceptor name="flash" class="zpark.ext.struts.FlashScopeInterceptor"/>
+			<interceptor name="loginCheck" class="zpark.struts2.action.day8.LoginCheckInterceptor"/>
+			<!-- 拦截器栈a1: 默认需要处理ajax, 检查登录, 和系统拦截器 -->
+			<interceptor-stack name="a1">
+				<interceptor-ref name="flash"/>
+				<interceptor-ref name="loginCheck"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+			<!-- 拦截器栈a2: 只需要处理ajax和系统拦截器 -->
+			<interceptor-stack name="a2">
+				<interceptor-ref name="flash"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+			<!-- 拦截器栈a3: 需要处理ajax, 检查登录, 和paramsPrepareParamsStack拦截器 -->
+			<interceptor-stack name="a3">
+				<interceptor-ref name="flash"/>
+				<interceptor-ref name="loginCheck"/>
+				<interceptor-ref name="paramsPrepareParamsStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="a1"/>
+		<global-results>
+			<result name="login" type="redirect">/day10/login.action</result>
+		</global-results>
+	</package>
+
+	<!-- ===== 教学辅助 package ===== -->
+	<package name="common" extends="struts-default" namespace="/common">
+		<action name="displayJavaSrc" class="zpark.struts2.action.common.DisplayJavaSrcAction">
+			<result name="success">/common/display.jsp</result>
+		</action>
+		<action name="displayJspSrc" class="zpark.struts2.action.common.DisplayJspSrcAction">
+			<result name="success">/common/display.jsp</result>
+		</action>
+		<action name="displayXmlSrc" class="zpark.struts2.action.common.DisplayXmlSrcAction">
+			<result name="success">/common/display.jsp</result>
+		</action>
+		<action name="displayStrutsDefault" class="zpark.struts2.action.common.DisplayStrutsDefaultAction">
+			<result name="success">/common/display.jsp</result>
+		</action>
+	</package>
+</struts>
