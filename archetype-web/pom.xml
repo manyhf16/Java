@@ -1,84 +1,85 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>zpark</groupId>
-  <artifactId>archetype-web</artifactId>
-  <version>1.0.0.RELEASE</version>
-  <packaging>war</packaging>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>zpark</groupId>
+    <artifactId>archetype-web</artifactId>
+    <version>1.0.0.RELEASE</version>
+    <packaging>war</packaging>
 
-  <properties>
+    <properties>
 
-    <!-- Generic properties -->
-    <java.version>1.6</java.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Generic properties -->
+        <java.version>1.6</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <!-- Web -->
-    <jsp.version>2.2</jsp.version>
-    <jstl.version>1.2</jstl.version>
-    <servlet.version>2.5</servlet.version>
+        <!-- Web -->
+        <jsp.version>2.2</jsp.version>
+        <jstl.version>1.2</jstl.version>
+        <servlet.version>2.5</servlet.version>
 
-    <!-- Test -->
-    <junit.version>4.11</junit.version>
+        <!-- Test -->
+        <junit.version>4.11</junit.version>
 
-    <!-- DB Driver -->
-    <oracle.version>5.0</oracle.version>
-    <mysql.version>5.1.30</mysql.version>
-  </properties>
+        <!-- DB Driver -->
+        <oracle.version>5.0</oracle.version>
+        <mysql.version>5.1.30</mysql.version>
+    </properties>
 
-  <dependencies>
-    <!-- DB Driver <dependency> <groupId>oracle.jdbc</groupId> <artifactId>ojdbc</artifactId> <version>${oracle.version}</version> </dependency> -->
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>${mysql.version}</version>
-    </dependency>
+    <dependencies>
+        <!-- DB Driver <dependency> <groupId>oracle.jdbc</groupId> <artifactId>ojdbc</artifactId> <version>${oracle.version}</version> 
+            </dependency> -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
 
-    <!-- Other Web dependencies -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>${jstl.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>${jsp.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <!-- Other Web dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>${jsp.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- Test Artifacts -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-archetype-plugin</artifactId>
-        <version>2.2</version>
-      </plugin>
-    </plugins>
-  </build>
+        <!-- Test Artifacts -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

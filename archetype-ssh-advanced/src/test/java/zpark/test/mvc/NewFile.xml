@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<response>
+    <payStatusList>
+        <row>
+            <status>0</status>
+            <statusText>正常</statusText>
+            <stt>a</stt>
+        </row>
+        <row>
+            <status>1</status>
+            <statusText>出错</statusText>
+            <stt>b</stt>
+        </row>
+    </payStatusList>
+    <resultStockList>
+        <row>
+            <stockNo>1</stockNo>
+        </row>
+    </resultStockList>
+</response>
