@@ -65,7 +65,8 @@ public class GenericDaoRegistryPostProcessor implements BeanDefinitionRegistryPo
 							Class<?> c = ClassUtils.forName(classMetadata.getClassName(), resourcePatternResolver.getClassLoader());
 							BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(GenericDaoProxyFactoryBean.class);
 							builder.addConstructorArgValue(c);
-							builder.addConstructorArgReference("hibernateTemplateExt");
+//							builder.addConstructorArgReference("hibernateTemplateExt");
+							builder.addConstructorArgReference("sessionFactory");
 							registry.registerBeanDefinition(ClassUtils.getShortNameAsProperty(c), builder.getBeanDefinition());
 						}
 					}

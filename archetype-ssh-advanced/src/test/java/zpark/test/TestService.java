@@ -1,8 +1,5 @@
 package zpark.test;
 
-import java.util.List;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +15,12 @@ public class TestService {
 
 	@Autowired
 	private SampleService sampleService;
-
+	
 	@Test
-	public void test() {
-		List<SampleEntity> list = sampleService.findAll();
-		Assert.assertEquals(8, list.size());
-	}
+    public void test2() {
+	    SampleEntity se = new SampleEntity();
+	    se.setName("bbb");
+	    sampleService.save(se);
+    }
 
 }

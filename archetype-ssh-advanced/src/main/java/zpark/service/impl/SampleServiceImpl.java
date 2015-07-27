@@ -30,4 +30,9 @@ public class SampleServiceImpl implements SampleService {
 //		return sampleDao.findAll();
 	}
 
+    @Override
+    public void save(SampleEntity entity) {
+        sampleDao.save(entity);
+    }
+
 }

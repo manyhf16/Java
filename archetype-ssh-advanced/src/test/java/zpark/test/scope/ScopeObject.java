@@ -1,4 +1,4 @@
-package zpark.test;
+package zpark.test.scope;
 
 public class ScopeObject {
 

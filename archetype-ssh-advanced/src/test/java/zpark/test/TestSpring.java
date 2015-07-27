@@ -29,7 +29,7 @@ public class TestSpring {
 //			}
 //		});
 		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-		advisor.setExpression("execution(* zpark.service.impl.*.*(..))");
+		advisor.setExpression("within(zpark.service.impl.*)");
 		advisor.setAdvice(new MethodInterceptor() {
 			
 			@Override

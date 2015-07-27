@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 
-import org.apache.pdfbox.pdfparser.PDFParser;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.Splitter;
 import org.junit.Test;
 
 /*
@@ -22,7 +19,7 @@ public class TestPdf {
     @Test
     // 异常自己处理一下吧
     public void test01() throws Exception {
-        File file = new File("F:\\文档\\面试题\\java_web_面试题.pdf");
+        /*File file = new File("F:\\文档\\面试题\\java_web_面试题.pdf");
         FileInputStream fis = new FileInputStream(file);
         // 创建一个PDF解析器
         PDFParser parser = new PDFParser(fis);
@@ -45,7 +42,7 @@ public class TestPdf {
             doc.close();
         }
         fis.close();
-        document.close();
+        document.close();*/
     }
 
 }

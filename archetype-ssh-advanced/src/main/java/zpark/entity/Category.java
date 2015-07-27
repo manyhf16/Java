@@ -32,7 +32,7 @@ public class Category implements Serializable {
 
 	private String name;
 
-	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
 	@JsonIgnore	
 	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	private Set<Product> products = new HashSet<Product>();
@@ -60,4 +60,11 @@ public class Category implements Serializable {
 	public void setProducts(Set<Product> products) {
 		this.products = products;
 	}
+
+    @Override
+    public String toString() {
+        return "Category [id=" + id + ", name=" + name + "]";
+    }
+	
+	
 }

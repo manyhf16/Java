@@ -32,11 +32,7 @@
 		<level value="trace" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
-	<logger name="org.springframework.jdbc.datasource" additivity="false">
-		<level value="debug" />
-		<appender-ref ref="sample-log-console" />
-	</logger>
-	<!-- <logger name="org.hibernate.SQL" additivity="false">
+	<logger name="org.springframework.orm" additivity="false">
 		<level value="debug" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
@@ -44,7 +40,6 @@
 		<level value="trace" />
 		<appender-ref ref="sample-log-console" />
 	</logger>
-	 -->
 	<!-- <logger name="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" additivity="false">
 		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
@@ -57,7 +52,14 @@
 		<level value="ERROR" />
 		<appender-ref ref="sample-log-console" />
 	</logger> -->
-
+    <logger name="org.springframework.aop.interceptor" additivity="false">
+        <level value="TRACE" />
+        <appender-ref ref="sample-log-console" />
+    </logger>
+    <logger name="org.springframework.web" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="sample-log-console" />
+    </logger>
 
 	<!-- ===================================================================== -->
 	<!-- Root logger 所有logger的基类，没有定义的logger将会使用root logger -->

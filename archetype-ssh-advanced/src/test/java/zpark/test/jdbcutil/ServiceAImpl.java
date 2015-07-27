@@ -1,10 +1,10 @@
 package zpark.test.jdbcutil;
 
-import zpark.ext.jdbc.MicroContrainer;
+import zpark.ext.jdbc.JdbcUtil;
 
 public class ServiceAImpl implements ServiceA{
 
-	ServiceB serviceB = MicroContrainer.createProxy(new ServiceBImpl(), ServiceB.class);
+	ServiceB serviceB = JdbcUtil.createProxy(new ServiceBImpl(), ServiceB.class);
 	@Override	
 	public Integer a() {
 		System.out.println("a..............");
@@ -14,7 +14,7 @@ public class ServiceAImpl implements ServiceA{
 	}
 	
 	public static void main(String[] args) {
-		ServiceA serviceA = MicroContrainer.createProxy(new ServiceAImpl(), ServiceA.class);
+		ServiceA serviceA = JdbcUtil.createProxy(new ServiceAImpl(), ServiceA.class);
 		int a = serviceA.a();
 		System.out.println(a);
 	}

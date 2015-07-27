@@ -5,6 +5,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ import zpark.ext.annotations.tx.Transactional;
  * @author yihang
  * 
  */
-public abstract class MicroContrainer {
+public abstract class JdbcUtil {
 
     private static ThreadLocal<Deque<TxInfo>> txs = new ThreadLocal<Deque<TxInfo>>();
 
@@ -64,63 +66,85 @@ public abstract class MicroContrainer {
             this.target = target;
         }
 
-        @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if(method.getName().equals("toString")) {
+                return target.toString();
+            }
             Transactional transactional = method.getAnnotation(Transactional.class);
-            Propagation propagation = transactional.propagation();
+            if (transactional == null) {
+                transactional = target.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes())
+                        .getAnnotation(Transactional.class);
+            }
             Deque<TxInfo> stack = txs.get();
-
-            if (Propagation.REQUIRED == propagation) {
-                if (stack == null) { // 还没有事务
-                    stack = new LinkedList<TxInfo>();
+            if (transactional != null) {
+                Propagation propagation = transactional.propagation();
+                if (Propagation.REQUIRED == propagation) {
+                    if (stack == null) { // 还没有事务
+                        stack = new LinkedList<TxInfo>();
+                        stack.push(new TxInfo(TxStatus.NEW, null));
+                        txs.set(stack);
+                    } else {
+                        TxInfo current = stack.peek();
+                        stack.push(new TxInfo(TxStatus.PARTICIPATING, current));
+                    }
+                } else if (Propagation.REQUIRES_NEW == propagation) {
+                    if (stack == null) { // 还没有事务
+                        stack = new LinkedList<TxInfo>();
+                        txs.set(stack);
+                    }
                     stack.push(new TxInfo(TxStatus.NEW, null));
-                    txs.set(stack);
-                } else {
-                    TxInfo current = stack.peek();
-                    stack.push(new TxInfo(TxStatus.PARTICIPATING, current));
-                }
-            } else if (Propagation.REQUIRES_NEW == propagation) {
-                if (stack == null) { // 还没有事务
-                    stack = new LinkedList<TxInfo>();
-                    txs.set(stack);
-                }
-                stack.push(new TxInfo(TxStatus.NEW, null));
-            } else if (Propagation.SUPPORTS == propagation) {
-                if (stack != null) {
-                    TxInfo current = stack.peek();
-                    stack.push(new TxInfo(TxStatus.PARTICIPATING, current));
+                } else if (Propagation.SUPPORTS == propagation) {
+                    if (stack != null) {
+                        TxInfo current = stack.peek();
+                        stack.push(new TxInfo(TxStatus.PARTICIPATING, current));
+                    }
                 }
             }
             Object result = null;
             try {
-                System.out.println("before ... method:" + method.getName() + " stack:" + stack);
+                if (transactional != null && stack != null) {
+                    if (isDebug) {
+                        System.out.println("before method:" + method.getName() + "transaction stack:" + stack);
+                    }
+                }
                 result = method.invoke(target, args);
-                if (stack != null) {
+                if (transactional != null && stack != null) {
                     TxInfo current = stack.pop();
                     if (current.isNew()) {
-                        System.out.println("connection:" + current.getConnection() + " commit");
+                        if (isDebug) {
+                            System.out.println("close and commit transactional connection:" + current.getConnection());
+                        }
                         current.getConnection().commit();
+                        current.getConnection().setAutoCommit(true);
                         current.getConnection().close();
                     }
                 }
             } catch (InvocationTargetException e) {
-                TxInfo current = stack.pop();
-                if (current.isNew() && current.isRollbackOnly()) {
-                    System.out.println("connection:" + current.getConnection() + " rollback");
-                    current.getConnection().rollback();
-                    current.getConnection().close();
-                } else {
-                    TxInfo prev = stack.peek();
-                    if (prev != null) {
-                        prev.setRollbackOnly(true);
+                // e.printStackTrace();
+                if (transactional != null && stack != null) {
+                    TxInfo current = stack.pop();
+                    if (current.isNew()) {
+                        if (isDebug) {
+                            System.out
+                                    .println("close and rollback transactional connection:" + current.getConnection());
+                        }
+                        current.getConnection().rollback();
+                        current.getConnection().setAutoCommit(true);
+                        current.getConnection().close();
                     }
                 }
                 throw e.getCause();
             } finally {
-                if (stack.isEmpty()) {
-                    txs.set(null);
+                if (transactional != null && stack != null) {
+                    if (stack.isEmpty()) {
+                        txs.set(null);
+                    }
+                    if (isDebug) {
+                        System.out.println("after method:" + method.getName() + "transaction stack:" + stack);
+                    }
+                } else {
+                    close();
                 }
-                System.out.println("after ... method:" + method.getName() + " stack:" + stack);
             }
             return result;
         }
@@ -131,7 +155,7 @@ public abstract class MicroContrainer {
         InputStream is = null;
         try {
             // 从配置文件读取配置，存入Properties 变量p
-            is = MicroContrainer.class.getResourceAsStream("/db_oracle.properties");
+            is = JdbcUtil.class.getResourceAsStream("/db_oracle.properties");
             p.load(is);
         } catch (Throwable e) {
             // 应用程序初始化错误
@@ -161,7 +185,7 @@ public abstract class MicroContrainer {
     }
 
     /**
-     * 获得数据库连接对象并绑定至当前线程，如果当前线程已有绑定的数据库连接则直接返回该连接对象
+     * 创建一个新的数据库连接
      * 
      * @return
      */
@@ -173,6 +197,9 @@ public abstract class MicroContrainer {
             String password = p.getProperty("jdbc.password");
             Class.forName(driver);
             Connection conn = DriverManager.getConnection(url, username, password);
+            if (isDebug) {
+                System.out.println("open connection: " + conn);
+            }
             return conn;
         } catch (Exception e) {
             throw new RuntimeException("error when getConnection", e);
@@ -208,11 +235,15 @@ public abstract class MicroContrainer {
         }
     }
 
-    public void close() {
+    public static void close() {
         Connection conn = conns.get();
         if (conn != null) {
             try {
+                conn.setAutoCommit(true);
                 conn.close();
+                if (isDebug) {
+                    System.out.println("close non-transactional connection: " + conn);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -372,7 +403,7 @@ public abstract class MicroContrainer {
                     ResultSetMetaData rsmd = rs.getMetaData();
                     T beanInstance = beanClass.newInstance();
                     for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                        String colName = rsmd.getColumnName(i);
+                        String colName = rsmd.getColumnLabel(i);
                         // logger.debug("colName:" + colName);
                         PropertyDescriptor pd = pds.get(colName.toLowerCase());
                         Object colValue = processOneCloumn(pd.getPropertyType(), rs, i);
@@ -472,7 +503,7 @@ public abstract class MicroContrainer {
                     ResultSetMetaData rsmd = rs.getMetaData();
                     T beanInstance = beanClass.newInstance();
                     for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                        String colName = rsmd.getColumnName(i);
+                        String colName = rsmd.getColumnLabel(i);
                         // logger.debug("colName:" + colName);
                         PropertyDescriptor pd = pds.get(colName.toLowerCase());
                         if (pd != null) {
@@ -484,6 +515,40 @@ public abstract class MicroContrainer {
                 }
             }
             return list;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            release(rs, psmt);
+        }
+    }
+
+    public static <T, K extends Serializable> Map<K, T> queryIdMap(Class<K> keyClass, Class<T> valueClass, String sql,
+            Object... params) {
+        Connection conn = null;
+        PreparedStatement psmt = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            psmt = conn.prepareStatement(sql);
+            prepare(psmt, params);
+            if (isDebug) {
+                System.out.println("SQL: [" + sql + "]");
+                System.out.println("SQL params: " + Arrays.toString(params));
+            }
+            rs = psmt.executeQuery();
+            Map<K, T> map = new LinkedHashMap<K, T>();
+            while (rs.next()) {
+                if ((valueClass.isPrimitive() || basicClasses.contains(valueClass))
+                        && (keyClass.isPrimitive() || basicClasses.contains(keyClass))) {
+                    K key = processOneCloumn(keyClass, rs, 1);
+                    T value = processOneCloumn(valueClass, rs, 2);
+                    map.put(key, value);
+                } else {
+                    throw new RuntimeException(
+                            "only support two column selection(column 1 for key, column 2 for value)");
+                }
+            }
+            return map;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -564,12 +629,6 @@ public abstract class MicroContrainer {
 
     public static class TxInfo {
         private TxStatus status;
-        private boolean rollbackOnly;
-
-        public void setRollbackOnly(boolean rollbackOnly) {
-            this.rollbackOnly = rollbackOnly;
-        }
-
         private Connection connection;
 
         public TxInfo(TxStatus status, TxInfo prev) {
@@ -602,17 +661,13 @@ public abstract class MicroContrainer {
             return this.status == TxStatus.PARTICIPATING;
         }
 
-        public boolean isRollbackOnly() {
-            return this.rollbackOnly;
-        }
-
         public boolean isCompleted() {
             return this.status == TxStatus.COMPLETED;
         }
 
         @Override
         public String toString() {
-            return "TxInfo [status=" + status + ", rollbackOnly=" + rollbackOnly + ", connection=" + connection + "]";
+            return "TxInfo [status=" + status + ", connection=" + connection + "]";
         }
 
     }
