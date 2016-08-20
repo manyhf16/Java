@@ -19,6 +19,7 @@ public class MergeSort implements Sort {
 		int i = bi;
 		int j = mi + 1;
 		int k = 0;
+		// 归并
 		while (i <= mi && j <= ei) {
 			if (comparator.compare(a[i], a[j]) < 0) {
 				r[k++] = a[i++];
@@ -32,6 +33,7 @@ public class MergeSort implements Sort {
 		while (j <= ei)
 			r[k++] = a[j++];
 
+		// 将结果存入原数组
 		for (i = 0; i < k; i++)
 			a[bi + i] = r[i];
 		

@@ -10,6 +10,7 @@ import java.util.Comparator;
  * @see SelectSort 
  * @see BubbleSort
  */
+@FunctionalInterface
 public interface Sort {
 
 	public abstract <T> void sort(T[] a, Comparator<? super T> comparator);
