@@ -9,9 +9,9 @@ public class BlockingQueue {
 	
 	private Lock lock;
 	
-	private Condition noEmpty;
+	private Condition take;
 	
-	private Condition noFull;
+	private Condition put;
 	
 	private LinkedList<Object> list;
 	
@@ -19,8 +19,8 @@ public class BlockingQueue {
 	
 	public BlockingQueue(int max) {
 		lock = new ReentrantLock();
-		noEmpty = lock.newCondition();
-		noFull = lock.newCondition();
+		take = lock.newCondition();
+		put = lock.newCondition();
 		list = new LinkedList<Object>();
 		this.max = max;
 	}
@@ -29,10 +29,10 @@ public class BlockingQueue {
 		lock.lock();
 		try {
 			while(list.size() == max) {
-				noFull.await();
+				put.await();
 			}
 			list.addLast(object);
-			noEmpty.signal();
+			take.signal();
 		} finally {
 			lock.unlock();
 		}
@@ -43,10 +43,10 @@ public class BlockingQueue {
 		Object result;
 		try {
 			while(list.size() == 0) {
-				noEmpty.await();
+				take.await();
 			}
 			result = list.removeFirst();
-			noFull.signal();
+			put.signal();
 		} finally {
 			lock.unlock();
 		}
