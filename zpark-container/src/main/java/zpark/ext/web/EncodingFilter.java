@@ -2,8 +2,7 @@ package zpark.ext.web;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Filter;
@@ -15,72 +14,79 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class EncodingFilter implements Filter {
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
+	private static Logger logger = LoggerFactory.getLogger(EncodingFilter.class);
 
-    private final String charset = "UTF-8";
+	private String charset = "UTF-8";
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-            ServletException {
-        HttpServletRequest req = (HttpServletRequest) request;
-        if (req.getMethod().equals("GET")) {
-            HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(req) {
-                ConcurrentHashMap<String, String> singleMap = new ConcurrentHashMap<String, String>();
-                ConcurrentHashMap<String, List<String>> multiMap = new ConcurrentHashMap<String, List<String>>();
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		String charset = filterConfig.getInitParameter("charset");
+		if (charset != null) {
+			this.charset = charset;
+		}
+	}
 
-                @Override
-                public String getParameter(String name) {
-                    try {
-                        String value = super.getParameter(name);
-                        if (value == null || value.trim().length() == 0) {
-                            return value;
-                        }
-                        String decode = singleMap.get(name);
-                        if (decode == null) {
-                            decode = new String(value.getBytes("iso-8859-1"), charset);
-                            singleMap.put(name, decode);
-                        }
-                        return decode;
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
+	private String decode(String value) {
+		try {
+			return new String(value.getBytes("iso-8859-1"), charset);
+		} catch (UnsupportedEncodingException e) {
+			logger.warn("decoding error{}", e.getMessage());
+			return null;
+		}
+	}
 
-                @Override
-                public String[] getParameterValues(String name) {
-                    String[] values = super.getParameterValues(name);
-                    if (values == null || values.length == 0) {
-                        return values;
-                    }
-                    try {
-                        List<String> list = multiMap.get(name);
-                        if (list == null) {
-                            list = new ArrayList<String>();
-                            for (String value : values) {
-                                String decode = new String(value.getBytes("iso-8859-1"), charset);
-                                list.add(decode);
-                            }
-                        }
-                        return list.toArray(new String[] {});
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
-            };
-            chain.doFilter(wrapper, response);
-        } else {
-            req.setCharacterEncoding(charset);
-            chain.doFilter(request, response);
-        }
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest req = (HttpServletRequest) request;
+		final ConcurrentHashMap<String, String[]> decodedMap = new ConcurrentHashMap<String, String[]>();
+		Map<String, String[]> map = req.getParameterMap();
+		for (String key : map.keySet()) {
+			String[] values = map.get(key);
+			if (values != null) {
+				String[] decodeValues = new String[values.length];
+				for (int i = 0; i < values.length; i++) {
+					String d = decode(values[i]);
+					decodeValues[i] = d;
+				}
+				decodedMap.put(key, decodeValues);
+			} else {
+				decodedMap.put(key, null);
+			}
+		}
+		if (req.getMethod().equals("GET")) {
+			HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(req) {
+				@Override
+				public String getParameter(String name) {
+					String[] values = decodedMap.get(name);
+					return values != null && values.length > 0 ? values[0] : null;
+				}
 
-    }
+				@Override
+				public Map<String, String[]> getParameterMap() {
+					return decodedMap;
+				}
 
-    @Override
-    public void destroy() {
-    }
+				@Override
+				public String[] getParameterValues(String name) {
+					return decodedMap.get(name);
+				}
+			};
+			chain.doFilter(wrapper, response);
+		} else {
+			req.setCharacterEncoding(charset);
+			chain.doFilter(request, response);
+		}
+
+	}
+
+	@Override
+	public void destroy() {
+	}
 
 }

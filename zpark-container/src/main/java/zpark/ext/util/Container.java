@@ -72,7 +72,7 @@ public class Container implements ClassfileVisitor {
                                 if(!f.isAccessible()) {
                                     f.setAccessible(true);
                                 }
-                                f.set(obj, value);
+//                                f.set(obj, value);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
