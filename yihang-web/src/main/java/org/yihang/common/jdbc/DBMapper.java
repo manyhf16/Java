@@ -12,7 +12,6 @@ import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -40,68 +39,63 @@ import org.slf4j.LoggerFactory;
  * @author yihang
  * 
  */
-public enum DBMapper {
-	Oracle {
-		{
-			init("/db_oracle.properties");
+public abstract class DBMapper {
+
+	// 提供DBMapper懒实例化
+	private static class DBMapperHolder {
+
+		public static DBMapper instance;
+		static {
+			init("/db.properties");
 		}
 
-		public <T> List<T> queryList(Class<T> beanClass, int pageNum, int pageSize, String sql, Object... params) {
-			String subsql = "select * from (select rownum r, a.* from (" + sql + ") a where rownum <=?) where r > ?";
+		protected static void init(String config) {
+			try (InputStream is = DBMapper.class.getResourceAsStream(config)) {
+				p.load(is);
+				String dialectClass = p.getProperty("jdbc.dialect");
+				instance = (DBMapper) Class.forName(dialectClass).newInstance();
 
-			boolean isEmpty = params == null || params.length == 0;
-			Object[] p = new Object[(isEmpty) ? 1 : params.length + 2];
-			if (isEmpty) {
-				p[0] = pageNum * pageSize;
-				p[1] = (pageNum - 1) * pageSize;
-			} else {
-				System.arraycopy(params, 0, p, 0, params.length);
-				p[params.length] = pageNum * pageSize;
-				p[params.length + 1] = (pageNum - 1) * pageSize;
-			}
-			return queryList(beanClass, subsql, (Object[]) p);
-		}
-	},
-	MySql {
-		{
-			init("/db_mysql.properties");
-		}
-
-		public <T> List<T> queryList(Class<T> beanClass, int pageNum, int pageSize, String sql, Object... params) {
-			if (pageNum == 1) {
-				String subsql = sql + " limit ?";
-				boolean isEmpty = params == null || params.length == 0;
-				int newLength = (isEmpty) ? 1 : params.length + 1;
-				Object[] p = new Object[newLength];
-				if (isEmpty) {
-					p[0] = pageSize;
-				} else {
-					System.arraycopy(params, 0, p, 0, params.length);
-					p[params.length] = pageSize;
-				}
-				return queryList(beanClass, subsql, (Object[]) p);
-			} else {
-				String subsql = sql + " limit ?,?";
-				boolean isEmpty = params == null || params.length == 0;
-				int newLength = (isEmpty) ? 2 : params.length + 2;
-				Object[] p = new Object[newLength];
-				if (isEmpty) {
-					p[0] = (pageNum - 1) * pageSize;
-					p[1] = pageSize;
-				} else {
-					System.arraycopy(params, 0, p, 0, params.length);
-					p[params.length] = (pageNum - 1) * pageSize;
-					p[params.length + 1] = pageSize;
-				}
-				return queryList(beanClass, subsql, (Object[]) p);
+				// 存储基本的类型，将来这些类型可以统一转换
+				basicClasses.add(Long.class);
+				basicClasses.add(Short.class);
+				basicClasses.add(Integer.class);
+				basicClasses.add(Character.class);
+				basicClasses.add(Double.class);
+				basicClasses.add(Float.class);
+				basicClasses.add(Byte.class);
+				basicClasses.add(Boolean.class);
+				basicClasses.add(String.class);
+				basicClasses.add(BigInteger.class);
+				basicClasses.add(BigDecimal.class);
+				basicClasses.add(Date.class);
+			} catch (Throwable e) {
+				throw new ExceptionInInitializerError(e);
 			}
 		}
-	};
-	protected Properties p = new Properties();
-	private static Logger logger = LoggerFactory.getLogger(DBMapper.class);
+	}
+
+	// 日志类，方便调试sql语句及运行状态
+	protected static Logger logger = LoggerFactory.getLogger(DBMapper.class);
+
+	// 存储db.properties信息
+	protected static Properties p = new Properties();
+
+	// 存取当前线程的事务状态
+	private ThreadLocal<Deque<TxInfo>> txs = new ThreadLocal<>();
+
+	private ThreadLocal<Boolean> ac = new ThreadLocal<>();
+
+	// 存取当前线程的连接对象
+	private ThreadLocal<Connection> conns = new ThreadLocal<>();
+
+	// 保存能够由DBMapper处理的基本类型
+	protected static List<Class<?>> basicClasses = new ArrayList<>();
+
+	// 用来缓存实体类的反射属性相关信息
+	private static Map<Class<?>, Map<String, PropertyDescriptor>> all = new ConcurrentHashMap<>();
 
 	/**
-	 * 通用查询方法，用来执行分页查询(Oracle)
+	 * 通用查询方法，用来执行分页查询，需要子类提供具体实现
 	 * 
 	 * @param <T>
 	 * @param beanClass
@@ -118,65 +112,46 @@ public enum DBMapper {
 	 */
 	public abstract <T> List<T> queryList(Class<T> beanClass, int pageNum, int pageSize, String sql, Object... params);
 
-	protected void init(String config) {
-		try (InputStream is = DBMapper.class.getResourceAsStream(config)) {
-			p.load(is);
-			String driver = p.getProperty("jdbc.driver");
-			Class.forName(driver);
-
-			// 存储基本的类型，将来这些类型可以统一转换
-			basicClasses.add(Long.class);
-			basicClasses.add(Short.class);
-			basicClasses.add(Integer.class);
-			basicClasses.add(Character.class);
-			basicClasses.add(Double.class);
-			basicClasses.add(Float.class);
-			basicClasses.add(Byte.class);
-			basicClasses.add(Boolean.class);
-			basicClasses.add(String.class);
-			basicClasses.add(BigInteger.class);
-			basicClasses.add(BigDecimal.class);
-			basicClasses.add(Date.class);
-		} catch (Throwable e) {
-			throw new ExceptionInInitializerError(e);
-		}
-	}
-
-	public static DBMapper getInstance() {
-		return MySql;
-	}
-
 	/**
-	 * 创建一个新的数据库连接
+	 * 创建一个新的数据库连接，需要子类提供具体实现
 	 * 
 	 * @return
 	 */
-	public Connection newConnection() {
-		try {
-			String url = p.getProperty("jdbc.url");
-			String username = p.getProperty("jdbc.username");
-			String password = p.getProperty("jdbc.password");
-			Connection conn = DriverManager.getConnection(url, username, password);
-			logger.debug("open connection:{}", conn);
-			return conn;
-		} catch (Exception e) {
-			throw new RuntimeException("error when getConnection", e);
-		}
+	public abstract Connection newConnection();
+
+	/**
+	 * 加载数据库驱动类，需要子类提供具体实现
+	 * 
+	 * @throws ClassNotFoundException
+	 */
+	public abstract void loadDriver() throws ClassNotFoundException;
+
+	/**
+	 * 获取DBMapper单实例
+	 * 
+	 * @return
+	 */
+	public static DBMapper getInstance() {
+		return DBMapperHolder.instance;
 	}
 
-	private ThreadLocal<Deque<TxInfo>> txs = new ThreadLocal<Deque<TxInfo>>();
-
-	private ThreadLocal<Connection> conns = new ThreadLocal<Connection>();
-
-	protected List<Class<?>> basicClasses = new ArrayList<Class<?>>();
-
+	/**
+	 * 创建事务代理
+	 * 
+	 * @param target
+	 *            要代理的目标对象
+	 * @param interfaces
+	 *            目标对象接口
+	 * @return 代理对象
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T createProxy(Object target, Class<T> interfaces) {
 		return (T) Proxy.newProxyInstance(interfaces.getClassLoader(), new Class[] { interfaces },
 				new TransactionAdvice(target));
 	}
 
-	public class TransactionAdvice implements InvocationHandler {
+	// 事务通知类
+	private class TransactionAdvice implements InvocationHandler {
 		private Object target;
 
 		public TransactionAdvice(Object target) {
@@ -222,24 +197,26 @@ public enum DBMapper {
 				if (transactional != null && stack != null) {
 					logger.debug("before method:{} transaction stack:{}", method.getName(), stack);
 				}
+				method.setAccessible(true);
 				result = method.invoke(target, args);
 				if (transactional != null && stack != null) {
 					TxInfo current = stack.pop();
 					if (current.isNew()) {
 						logger.debug("close and commit transactional connection:{}", current.getConnection());
 						current.getConnection().commit();
-						current.getConnection().setAutoCommit(true);
+						current.getConnection().setAutoCommit(ac.get());
 						current.getConnection().close();
 					}
 				}
-			} catch (InvocationTargetException e) {
+				return result;
+			} catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
 				// e.printStackTrace();
 				if (transactional != null && stack != null) {
 					TxInfo current = stack.pop();
 					if (current.isNew()) {
 						logger.debug("close and rollback transactional connection:{}", current.getConnection());
 						current.getConnection().rollback();
-						current.getConnection().setAutoCommit(true);
+						current.getConnection().setAutoCommit(ac.get());
 						current.getConnection().close();
 					}
 				}
@@ -254,7 +231,50 @@ public enum DBMapper {
 					close();
 				}
 			}
-			return result;
+		}
+
+	}
+
+	/**
+	 * 辅助类，用于跟踪事务状态
+	 * 
+	 * @author yihang
+	 * 
+	 */
+	private static enum TxStatus {
+		NEW, PARTICIPATING;
+	}
+
+	private class TxInfo {
+		private TxStatus status;
+		private Connection connection;
+
+		public TxInfo(TxStatus status, TxInfo prev) {
+			this.status = status;
+			if (isNew()) {
+				this.connection = newConnection();
+				try {
+					ac.set(this.connection.getAutoCommit());
+					this.connection.setAutoCommit(false);
+				} catch (SQLException e) {
+					throw new RuntimeException("error when begin transaction", e);
+				}
+			} else {
+				this.connection = prev.getConnection();
+			}
+		}
+
+		public Connection getConnection() {
+			return connection;
+		}
+
+		public boolean isNew() {
+			return this.status == TxStatus.NEW;
+		}
+
+		@Override
+		public String toString() {
+			return "TxInfo [status=" + status + ", connection=" + connection + "]";
 		}
 
 	}
@@ -288,11 +308,17 @@ public enum DBMapper {
 		}
 	}
 
+	/**
+	 * 关闭连接对象，用在非代理情况下，连接关闭
+	 * <p>
+	 * 代理模式下，事务结束会自动关闭连接
+	 * </p>
+	 */
 	public void close() {
 		Connection conn = conns.get();
 		if (conn != null) {
 			try {
-				conn.setAutoCommit(true);
+				conn.setAutoCommit(ac.get());
 				conn.close();
 				logger.debug("close non-transactional connection:{}", conn);
 			} catch (SQLException e) {
@@ -302,6 +328,7 @@ public enum DBMapper {
 		}
 	}
 
+	// 获取连接对象
 	private Connection getConnection() {
 		Deque<TxInfo> stack = txs.get();
 		if (stack == null) {
@@ -313,68 +340,6 @@ public enum DBMapper {
 			return conn;
 		} else {
 			return stack.peek().getConnection();
-		}
-	}
-
-	/**
-	 * 通用update,delete,insert方法
-	 * 
-	 * @param sql
-	 * @param params
-	 * @return 影响行数
-	 */
-	public int update(String sql, Object... params) {
-		Connection conn = null;
-		PreparedStatement psmt = null;
-		try {
-			conn = getConnection();
-			psmt = conn.prepareStatement(sql);
-			prepare(psmt, params);
-			if (logger.isDebugEnabled()) {
-				logger.debug("SQL: [{}]", sql);
-				logger.debug("SQL params: [{}]", Arrays.toString(params));
-			}
-			return psmt.executeUpdate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			release(psmt);
-		}
-	}
-
-	/**
-	 * 通用insert方法(需要获得主键值时使用)
-	 * 
-	 * @param sql
-	 * @param pkColumnName
-	 *            主键列的名字
-	 * @param params
-	 * @return
-	 */
-	public <T> T insert(String sql, String pkColumnName, Class<T> pkColumnClass, Object... params) {
-		Connection conn = null;
-		PreparedStatement psmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-			psmt = conn.prepareStatement(sql, new String[] { pkColumnName });
-			prepare(psmt, params);
-			if (logger.isDebugEnabled()) {
-				logger.debug("SQL: [{}]", sql);
-				logger.debug("SQL params: [{}]", Arrays.toString(params));
-			}
-			psmt.executeUpdate();
-			rs = psmt.getGeneratedKeys();
-			boolean empty = !rs.next();
-			if (empty) {
-				throw new RuntimeException("no generated keys");
-			}
-			return processOneCloumn(pkColumnClass, rs, 1);
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			release(psmt);
 		}
 	}
 
@@ -400,8 +365,6 @@ public enum DBMapper {
 		}
 	}
 
-	private static Map<Class<?>, Map<String, PropertyDescriptor>> all = new ConcurrentHashMap<Class<?>, Map<String, PropertyDescriptor>>();
-
 	/**
 	 * 得到某一实体列中属性反射信息的map集合：key是属性名(全小写), value是该属性的反射信息 <br>
 	 * 为了避免每次都获取这些信息(比较耗时)，用了一个all集合来缓存上次的结果
@@ -421,6 +384,70 @@ public enum DBMapper {
 			all.put(beanClass, map);
 		}
 		return map;
+	}
+
+	/**
+	 * 通用update,delete,insert方法
+	 * 
+	 * @param sql
+	 * @param params
+	 * @return 影响行数
+	 */
+	public int update(String sql, Object... params) {
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		try {
+			conn = getConnection();
+			psmt = conn.prepareStatement(sql);
+			prepare(psmt, params);
+			if (logger.isDebugEnabled()) {
+				logger.debug("SQL: [{}]", sql);
+				logger.debug("SQL params: {}", Arrays.toString(params));
+			}
+			return psmt.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			release(psmt);
+		}
+	}
+
+	/**
+	 * 通用insert方法(需要获得主键值时使用)
+	 * 
+	 * @param sql
+	 *            sql语句
+	 * @param pkColumnName
+	 *            主键列的名字
+	 * @param params
+	 *            参数值
+	 * @return 主键值
+	 */
+	public <T> T insert(String sql, String pkColumnName, Class<T> pkColumnClass, Object... params) {
+		Connection conn = null;
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			psmt = conn.prepareStatement(sql, new String[] { pkColumnName });
+			prepare(psmt, params);
+			if (logger.isDebugEnabled()) {
+				logger.debug("SQL: [{}]", sql);
+				logger.debug("SQL params: {}", Arrays.toString(params));
+			}
+			psmt.executeUpdate();
+			rs = psmt.getGeneratedKeys();
+			boolean empty = !rs.next();
+			if (empty) {
+				throw new RuntimeException("no generated keys");
+			}
+			return processOneCloumn(pkColumnClass, rs, 1);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			release(psmt);
+		}
 	}
 
 	/**
@@ -445,7 +472,7 @@ public enum DBMapper {
 			prepare(psmt, params);
 			if (logger.isDebugEnabled()) {
 				logger.debug("SQL: [{}]", sql);
-				logger.debug("SQL params: [{}]", Arrays.toString(params));
+				logger.debug("SQL params: {}", Arrays.toString(params));
 			}
 			rs = psmt.executeQuery();
 			if (rs.next()) {
@@ -544,7 +571,7 @@ public enum DBMapper {
 			prepare(psmt, params);
 			if (logger.isDebugEnabled()) {
 				logger.debug("SQL: [{}]", sql);
-				logger.debug("SQL params: [{}]", Arrays.toString(params));
+				logger.debug("SQL params: {}", Arrays.toString(params));
 			}
 			rs = psmt.executeQuery();
 			List<T> list = new ArrayList<T>();
@@ -575,6 +602,19 @@ public enum DBMapper {
 		}
 	}
 
+	/**
+	 * 用来将结果集映射为一个Map集合，key为查询语句中的第一列，值为剩余的列
+	 * 
+	 * @param keyClass
+	 *            key的类型
+	 * @param valueClass
+	 *            value的类型
+	 * @param sql
+	 *            sql语句
+	 * @param params
+	 *            参数值
+	 * @return
+	 */
 	public <T, K extends Serializable> Map<K, T> queryIdMap(Class<K> keyClass, Class<T> valueClass, String sql,
 			Object... params) {
 		Connection conn = null;
@@ -586,7 +626,7 @@ public enum DBMapper {
 			prepare(psmt, params);
 			if (logger.isDebugEnabled()) {
 				logger.debug("SQL: [{}]", sql);
-				logger.debug("SQL params: [{}]", Arrays.toString(params));
+				logger.debug("SQL params: {}", Arrays.toString(params));
 			}
 			rs = psmt.executeQuery();
 			Map<K, T> map = new LinkedHashMap<K, T>();
@@ -648,61 +688,6 @@ public enum DBMapper {
 		} finally {
 			release(rs, psmt);
 		}
-	}
-
-	/**
-	 * 辅助类，用于跟踪事务状态
-	 * 
-	 * @author yihang
-	 * 
-	 */
-	public static enum TxStatus {
-		NEW, PARTICIPATING, COMPLETED;
-	}
-
-	public class TxInfo {
-		private TxStatus status;
-		private Connection connection;
-
-		public TxInfo(TxStatus status, TxInfo prev) {
-			this.status = status;
-			if (isNew()) {
-				this.connection = newConnection();
-				try {
-					this.connection.setAutoCommit(false);
-				} catch (SQLException e) {
-					throw new RuntimeException("error when begin transaction", e);
-				}
-			} else {
-				this.connection = prev.getConnection();
-			}
-		}
-
-		public TxStatus getStatus() {
-			return status;
-		}
-
-		public Connection getConnection() {
-			return connection;
-		}
-
-		public boolean isNew() {
-			return this.status == TxStatus.NEW;
-		}
-
-		public boolean isParticipating() {
-			return this.status == TxStatus.PARTICIPATING;
-		}
-
-		public boolean isCompleted() {
-			return this.status == TxStatus.COMPLETED;
-		}
-
-		@Override
-		public String toString() {
-			return "TxInfo [status=" + status + ", connection=" + connection + "]";
-		}
-
 	}
 
 }
