@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://mybatis.org/schema/mybatis-spring
+    http://mybatis.org/schema/mybatis-spring.xsd">
+
+	<!-- 1. druid数据源 配置文档：https://github.com/alibaba/druid/wiki/DruidDataSource%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7%E5%88%97%E8%A1%A8 -->
+	<context:property-placeholder
+		local-override="true" location="classpath:spring.properties" order="1" />
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maxActive" value="${datasource.max}" />
+		<property name="minIdle" value="${datasource.min}" />
+		<property name="initialSize" value="${datasource.init}" />
+		<property name="maxWait" value="${datasource.wait}" />
+		<property name="minEvictableIdleTimeMillis" value="${datasource.idle.holdtime}" />
+		<property name="testWhileIdle" value="${datasource.test}" />
+		<property name="validationQuery" value="${datasource.test.sql}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${datasource.test.interval}" />
+		<property name="poolPreparedStatements" value="${datasource.pscache}" />
+		<property name="maxOpenPreparedStatements" value="${datasource.pscache.number}" />
+		<property name="filters" value="config" />
+		<property name="connectionProperties"
+			value="config.decrypt=true;config.decrypt.key=${jdbc.publickey}" />
+		<property name="proxyFilters">
+			<list>
+				<bean class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+					<property name="statementLogEnabled" value="true" />
+					<property name="statementExecutableSqlLogEnable" value="true" />
+					<property name="statementCreateAfterLogEnabled" value="false" />
+					<property name="statementPrepareAfterLogEnabled" value="false" />
+					<property name="statementPrepareCallAfterLogEnabled" value="false" />
+					<property name="statementExecuteAfterLogEnabled" value="false" />
+					<property name="statementExecuteQueryAfterLogEnabled" value="false" />
+					<property name="statementExecuteUpdateAfterLogEnabled" value="false" />
+					<property name="statementExecuteBatchAfterLogEnabled" value="false" />
+					<property name="statementCloseAfterLogEnabled" value="false" />
+					<property name="statementParameterSetLogEnabled" value="false" />
+					<property name="statementParameterClearLogEnable" value="false" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 2. mybatis -->
+	<mybatis:scan base-package="org.yihang.mapper" />
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configuration">
+			<bean class="org.apache.ibatis.session.Configuration">
+				<property name="mapUnderscoreToCamelCase" value="true" />
+			</bean>
+		</property>
+		<property name="plugins">
+			<list>
+				<bean
+					class="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
+					<property name="dialectClass" value="${mybatis.dialect}" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 3. service -->
+	<context:component-scan base-package="org.yihang.service" />
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="find*" propagation="SUPPORTS" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice" pointcut="within(org.yihang.service..*)" />
+	</aop:config>
+
+</beans> 
