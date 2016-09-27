@@ -1,7 +1,9 @@
 package org.yihang.entity;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@XmlRootElement
 public class User {
 
 	private int id;
