@@ -14,7 +14,7 @@
 		<property name="ignoreAcceptHeader" value="true" />
 		<property name="favorPathExtension" value="true"/>
 		<property name="useJaf" value="false" />
-		<property name="defaultContentType" value="text/plain"/>
+		<property name="defaultContentType" value="application/json"/>
 		<property name="mediaTypes" >
 			<map>
 				<entry key="txt" value="text/plain"/>
@@ -46,6 +46,6 @@
 
 	<mvc:view-resolvers>
 		<mvc:jsp prefix="/WEB-INF/jsp/" />
-		<mvc:content-negotiation use-not-acceptable="true"/>
+		<mvc:content-negotiation use-not-acceptable="false"/>
 	</mvc:view-resolvers>
 </beans> 

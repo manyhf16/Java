@@ -44,22 +44,22 @@ public class EncodingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		final ConcurrentHashMap<String, String[]> decodedMap = new ConcurrentHashMap<String, String[]>();
-		Map<String, String[]> map = req.getParameterMap();
-		for (String key : map.keySet()) {
-			String[] values = map.get(key);
-			if (values != null) {
-				String[] decodeValues = new String[values.length];
-				for (int i = 0; i < values.length; i++) {
-					String d = decode(values[i]);
-					decodeValues[i] = d;
-				}
-				decodedMap.put(key, decodeValues);
-			} else {
-				decodedMap.put(key, null);
-			}
-		}
 		if (req.getMethod().equals("GET")) {
+			final ConcurrentHashMap<String, String[]> decodedMap = new ConcurrentHashMap<String, String[]>();
+			Map<String, String[]> map = req.getParameterMap();
+			for (String key : map.keySet()) {
+				String[] values = map.get(key);
+				if (values != null) {
+					String[] decodeValues = new String[values.length];
+					for (int i = 0; i < values.length; i++) {
+						String d = decode(values[i]);
+						decodeValues[i] = d;
+					}
+					decodedMap.put(key, decodeValues);
+				} else {
+					decodedMap.put(key, null);
+				}
+			}
 			HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(req) {
 				@Override
 				public String getParameter(String name) {
@@ -77,6 +77,7 @@ public class EncodingFilter implements Filter {
 					return decodedMap.get(name);
 				}
 			};
+			req.setCharacterEncoding(charset);
 			chain.doFilter(wrapper, response);
 		} else {
 			req.setCharacterEncoding(charset);
